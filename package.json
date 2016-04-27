@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "test:client": "mocha --compilers ts:espower-typescript/guess test/client/**/*.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "axios": "^0.11.0",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.5.0",
     "babel-preset-react": "^6.5.0",
@@ -23,6 +25,7 @@
     "eslint-plugin-import": "^1.6.0",
     "eslint-plugin-jsx-a11y": "^1.0.3",
     "eslint-plugin-react": "^5.0.1",
+    "espower-typescript": "^5.0.1",
     "events": "^1.1.0",
     "express": "^4.13.4",
     "express-session": "^1.13.0",
@@ -35,7 +38,7 @@
     "ts-loader": "^0.8.2",
     "tslint": "^3.8.1",
     "twit": "^2.2.3",
-    "typescript": "^1.9.0-dev.20160220",
+    "typescript": "^1.8.10",
     "webpack": "^1.13.0"
   },
   "dependencies": {

@@ -24,7 +24,7 @@ class TwitterContainer extends Event {
     const twit = this.twit(account.token, account.tokenSecret);
     const stream = Object.assign(twit.stream('user'), { account });
     if (options.setStream) {
-      this.streamCbs.forEach(cb => this._appendCallback(stream, cb));
+      this.streamCbs.forEach(cb => this.appendCallback(stream, cb));
     }
     this.streams.push(stream);
   }
@@ -33,6 +33,7 @@ class TwitterContainer extends Event {
     const twit = this.twit(account.token, account.tokenSecret);
     return new Promise(res => {
       twit.post('statuses/update', options, (err, data, response) => {
+        console.log(err);
         res(data);
       });
     });
@@ -54,10 +55,10 @@ class TwitterContainer extends Event {
     }
     this.streamCbs.push(cb);
     if (options.setStream) {
-      this.streams.forEach(stream => this._appendCallback(stream, cb));
+      this.streams.forEach(stream => this.appendCallback(stream, cb));
     }
   }
-  _appendCallback(stream, cb) {
+  appendCallback(stream, cb) {
     stream.on('tweet', (tweet) => cb(tweet, stream.account));
   }
 }
