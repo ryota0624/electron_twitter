@@ -1,21 +1,21 @@
 'use strict';
 const fs = require('fs');
 class Db {
-  constructor(adptor, dbNames) {
-    this.adptor = adptor;
+  constructor(adaptor, dbNames) {
+    this.adaptor = adaptor;
     this.dbNames = dbNames;
   }
   init() {
-    return this.adptor.init(this.dbNames);
+    return this.adaptor.init(this.dbNames);
   }
   save(dbName, key, obj) {
-    return this.adptor.save(dbName, key, obj);
+    return this.adaptor.save(dbName, key, obj);
   }
   load(dbName) {
-    return this.adptor.load(dbName);
+    return this.adaptor.load(dbName);
   }
-  destory(dbName) {
-    return this.adptor.destory(dbName);
+  destroy(dbName) {
+    return this.adaptor.destroy(dbName);
   }
 }
 
@@ -57,7 +57,7 @@ class FileDb {
       });
     });
   }
-  destory(dbName) {
+  destroy(dbName) {
     return new Promise((res, rej) => {
       fs.writeFile(`${this.filePath}${dbName}`, '', (err) => {
         if (err) rej(err);

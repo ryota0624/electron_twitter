@@ -15,23 +15,47 @@ class TwitterContainer extends Event {
     });
     this.accounts = new Map();
   }
-  setAccount(key, account) {
+  setAccount(key, account, optionsArg) {
+    let options = { setStream: true };
+    if (optionsArg) {
+      options = optionsArg;
+    }
     this.accounts.set(key, account);
     const twit = this.twit(account.token, account.tokenSecret);
     const stream = Object.assign(twit.stream('user'), { account });
-    this.streamCbs.forEach(cb => this._appendCallback(stream, cb));
+    if (options.setStream) {
+      this.streamCbs.forEach(cb => this._appendCallback(stream, cb));
+    }
     this.streams.push(stream);
   }
   postTweet(key, options) {
     const account = this.accounts.get(key);
     const twit = this.twit(account.token, account.tokenSecret);
-    twit.post('statuses/update', options, (err, data, response) => {
-      options.cb(err, data, response);
+    return new Promise(res => {
+      twit.post('statuses/update', options, (err, data, response) => {
+        res(data);
+      });
     });
   }
-  onStream(cb) {
+  deleteTweet(key, id) {
+    const twit = this.getTwit(key);
+    return new Promise(res => {
+      twit.post('statuses/destroy/:id', { id }, (err, data) => res(data));
+    });
+  }
+  getTwit(key) {
+    const account = this.accounts.get(key);
+    return this.twit(account.token, account.tokenSecret);
+  }
+  onStream(cb, optionsArg) {
+    let options = { setStream: true };
+    if (optionsArg) {
+      options = optionsArg;
+    }
     this.streamCbs.push(cb);
-    this.streams.forEach(stream => this._appendCallback(stream, cb));
+    if (options.setStream) {
+      this.streams.forEach(stream => this._appendCallback(stream, cb));
+    }
   }
   _appendCallback(stream, cb) {
     stream.on('tweet', (tweet) => cb(tweet, stream.account));
