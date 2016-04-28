@@ -47,16 +47,17 @@ export class TweetModel extends Record(initialModel) {
   post() {
     return {
       status: this.text,
-      in_reply_to_status_id_str: this.in_reply_to_status_id_str
+      in_reply_to_status_id: this.in_reply_to_status_id
     }
   }
   replay(tweet: TweetModel) {
     const replayStatus = `@${this.user.screen_name} ${tweet.post().status}`;
     return new TweetModel({
       text: replayStatus,
-      in_reply_to_status_id_str: this.id_str
+      in_reply_to_status_id: this.id_str
     });
   }
+  //in_reply_to_status_id　にstring型のtweetIdを渡すの
   destroy() {
     return {
       id_str: this.id_str

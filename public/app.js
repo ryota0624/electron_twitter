@@ -61,12 +61,13 @@
 	var status = new tweet_2.TweetModel({ text: new Date() });
 	twAction.postTweet('2979592160', status).then(function (st) {
 	    var repStatus = new tweet_2.TweetModel(st);
+	    console.log(repStatus.replay(status).post());
 	    twAction.postTweet('2979592160', repStatus.replay(status)).then(function (res) {
 	        console.log(res);
 	        return res;
 	    }).then(function (rpst) {
-	        twAction.destroyTweet('2979592160', repStatus);
-	        twAction.destroyTweet('2979592160', new tweet_2.TweetModel(rpst));
+	        // twAction.destroyTweet('2979592160', repStatus);
+	        // twAction.destroyTweet('2979592160', new TweetModel(rpst));
 	    });
 	    // twAction.destroyTweet('2979592160', repStatus).then(res => console.log(res));
 	});
@@ -6144,7 +6145,7 @@
 	        value: function post() {
 	            return {
 	                status: this.text,
-	                in_reply_to_status_id_str: this.in_reply_to_status_id_str
+	                in_reply_to_status_id: this.in_reply_to_status_id
 	            };
 	        }
 	    }, {
@@ -6153,9 +6154,11 @@
 	            var replayStatus = "@" + this.user.screen_name + " " + tweet.post().status;
 	            return new TweetModel({
 	                text: replayStatus,
-	                in_reply_to_status_id_str: this.id_str
+	                in_reply_to_status_id: this.id_str
 	            });
 	        }
+	        //in_reply_to_status_id　にstring型のtweetIdを渡すの
+	
 	    }, {
 	        key: "destroy",
 	        value: function destroy() {

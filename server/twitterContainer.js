@@ -33,7 +33,6 @@ class TwitterContainer extends Event {
     const twit = this.twit(account.token, account.tokenSecret);
     return new Promise(res => {
       twit.post('statuses/update', options, (err, data, response) => {
-        console.log(err);
         res(data);
       });
     });
@@ -44,9 +43,39 @@ class TwitterContainer extends Event {
       twit.post('statuses/destroy/:id', { id }, (err, data) => res(data));
     });
   }
+  createFav(key, id) {
+    const twit = this.getTwit(key);
+    return new Promise(res => {
+      twit.post('favorites/create', { id }, (err, data) => {
+        res(data);
+      });
+    });
+  }
+  destroyFav(key, id) {
+    const twit = this.getTwit(key);
+    return new Promise(res => {
+      twit.post('favorites/destroy', { id }, (err, data) => {
+        res(data);
+      });
+    });
+  }
   getTwit(key) {
     const account = this.accounts.get(key);
     return this.twit(account.token, account.tokenSecret);
+  }
+  getTweet(key, id) {
+    const twit = this.getTwit(key);
+    return new Promise(res => {
+      twit.get('statuses/show/:id', { id }, (err, data) => res(data));
+    });
+  }
+  getFavList(key) {
+    const twit = this.getTwit(key);
+    return new Promise(res => {
+      twit.get('favorites/list', {}, (err, data) => {
+        res(data);
+      });
+    });
   }
   onStream(cb, optionsArg) {
     let options = { setStream: true };

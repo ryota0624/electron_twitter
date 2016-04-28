@@ -14,19 +14,25 @@ export const command = (type: string, props?) => {
 export default class StateStore<T> extends EventEmitter {
   state: T;
   _handler: (any, T) => T;
-  constructor(initialState: T, handler: (any, T) => T) {
+  actions: Im.List<any>;
+  constructor(initialState: T, handler: (any, T) => T, actions: Array<any> = []) {
     super();
     this.state = initialState;
     this._handler = handler;
+    this.actions = Im.List(actions);
     dispatcher.register(this.register.bind(this));
   }
   private register(action) {
+    this.actions = this.actions.push(action);
     const state = this.state;
     const nextState = this._handler(action, state);
     if (!Im.is(nextState, state)) {
       this.state = nextState;
       this.emitChange();
     }
+  }
+  getActions() {
+    return this.actions.toArray();
   }
   get() {
     return this.state;

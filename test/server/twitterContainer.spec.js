@@ -21,13 +21,20 @@ describe('twitterContainer', () => {
     });
   });
   describe('tweet', () => {
-    it('postTweet -> delete', () => container.postTweet('test', { status: new Date() })
-        .then(data => data.id_str)
-        .then(id => {
-          it('post:id', () => assert(true));
-          return id;
-        })
-        .then(id => container.deleteTweet('test', id))
-        .then((data) => assert(data)));
+    it('postTweet -> fav -> destroyfav -> delete',
+      () => container.postTweet('test', { status: new Date() })
+      .then(data => data.id_str)
+      .then(id => {
+        it('post:id', () => assert(true));
+        return id;
+      })
+      .then(id => container.createFav('test', id))
+      .then(data => container.destroyFav('test', data.id_str))
+      .then(data => container.deleteTweet('test', data.id_str))
+      .then((data) => assert(data.id)));
+    it('favList', () => container.getFavList('test')
+      .then(data => assert(data.length)));
+    it('getTweet', () => container.getTweet('test', '210462857140252672')
+      .then(res => assert(res.id)));
   });
 });
