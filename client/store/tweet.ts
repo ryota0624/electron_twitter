@@ -32,5 +32,9 @@ export class TweetStore extends Store<tweetCollectionn> {
 }
 
 const initState = Map<string, TweetModel>()
-const tweetStore = new TweetStore(initState, handler);
-export default tweetStore;
+// const tweetStore = new TweetStore(initState, handler);
+export const TweetStoreFactory = ({state = initState, actions = []}) => {
+  const newState = state ? state : initState;
+  return new TweetStore(newState, handler, actions);
+}
+export default TweetStoreFactory;

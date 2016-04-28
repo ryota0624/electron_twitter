@@ -15,14 +15,20 @@ export default class StateStore<T> extends EventEmitter {
   state: T;
   _handler: (any, T) => T;
   actions: Im.List<any>;
+  lastAction: any;
   constructor(initialState: T, handler: (any, T) => T, actions: Array<any> = []) {
     super();
     this.state = initialState;
     this._handler = handler;
     this.actions = Im.List(actions);
+    this.state = this.reduceActions(actions);
     dispatcher.register(this.register.bind(this));
   }
+  reduceActions(actions) {
+    return this.actions.reduce((state, action) => this._handler(action, state), this.state);
+  }
   private register(action) {
+    this.lastAction = action;
     this.actions = this.actions.push(action);
     const state = this.state;
     const nextState = this._handler(action, state);

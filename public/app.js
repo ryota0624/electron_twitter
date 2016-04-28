@@ -49,28 +49,35 @@
 	var adminAccount_1 = __webpack_require__(1);
 	var tweet_1 = __webpack_require__(11);
 	var socket_1 = __webpack_require__(14);
-	var twAction = __webpack_require__(63);
-	var tweet_2 = __webpack_require__(13);
-	tweet_1.default.addChangeListener(function () {
-	    return console.log(tweet_1.default.get().toJS());
+	var localhost_1 = __webpack_require__(82);
+	var tweetDB = new localhost_1.ActionDatabase('tweet');
+	var oldActins = tweetDB.load();
+	var tweetStore = tweet_1.default({ actions: oldActins });
+	tweetStore.addChangeListener(function () {
+	    return console.log(tweetStore.get().toJS());
+	});
+	tweetStore.addChangeListener(function () {
+	    tweetDB.save(tweetStore.lastAction);
+	    tweetDB.commit();
 	});
 	adminAccount_1.default.addChangeListener(function () {
 	    return console.log(adminAccount_1.default.get().toJS());
 	});
 	socket_1.socketConnect();
-	var status = new tweet_2.TweetModel({ text: new Date() });
-	twAction.postTweet('2979592160', status).then(function (st) {
-	    var repStatus = new tweet_2.TweetModel(st);
-	    console.log(repStatus.replay(status).post());
-	    twAction.postTweet('2979592160', repStatus.replay(status)).then(function (res) {
-	        console.log(res);
-	        return res;
-	    }).then(function (rpst) {
-	        // twAction.destroyTweet('2979592160', repStatus);
-	        // twAction.destroyTweet('2979592160', new TweetModel(rpst));
-	    });
-	    // twAction.destroyTweet('2979592160', repStatus).then(res => console.log(res));
-	});
+	// const status = new TweetModel({ text: new Date() });
+	// // twAction.postTweet('2979592160', status).then(st => {
+	// //   const repStatus = new TweetModel(st);
+	// //   console.log(repStatus.replay(status).post());
+	// //   twAction.postTweet('2979592160', repStatus.replay(status))
+	// //     .then(res => {
+	// //       console.log(res);
+	// //       return res;
+	// //     }).then(rpst => {
+	// //       // twAction.destroyTweet('2979592160', repStatus);
+	// //       // twAction.destroyTweet('2979592160', new TweetModel(rpst));
+	// //     })
+	// //   // twAction.destroyTweet('2979592160', repStatus).then(res => console.log(res));
+	// // });
 
 /***/ },
 /* 1 */
@@ -195,25 +202,45 @@
 	    _inherits(StateStore, _events_1$EventEmitte);
 	
 	    function StateStore(initialState, handler) {
+	        var actions = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
+	
 	        _classCallCheck(this, StateStore);
 	
 	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(StateStore).call(this));
 	
 	        _this.state = initialState;
 	        _this._handler = handler;
+	        _this.actions = Im.List(actions);
+	        _this.state = _this.reduceActions(actions);
 	        exports.dispatcher.register(_this.register.bind(_this));
 	        return _this;
 	    }
 	
 	    _createClass(StateStore, [{
+	        key: "reduceActions",
+	        value: function reduceActions(actions) {
+	            var _this2 = this;
+	
+	            return this.actions.reduce(function (state, action) {
+	                return _this2._handler(action, state);
+	            }, this.state);
+	        }
+	    }, {
 	        key: "register",
 	        value: function register(action) {
+	            this.lastAction = action;
+	            this.actions = this.actions.push(action);
 	            var state = this.state;
 	            var nextState = this._handler(action, state);
 	            if (!Im.is(nextState, state)) {
 	                this.state = nextState;
 	                this.emitChange();
 	            }
+	        }
+	    }, {
+	        key: "getActions",
+	        value: function getActions() {
+	            return this.actions.toArray();
 	        }
 	    }, {
 	        key: "get",
@@ -6078,9 +6105,18 @@
 	
 	exports.TweetStore = TweetStore;
 	var initState = immutable_1.Map();
-	var tweetStore = new TweetStore(initState, handler);
+	// const tweetStore = new TweetStore(initState, handler);
+	exports.TweetStoreFactory = function (_ref) {
+	    var _ref$state = _ref.state;
+	    var state = _ref$state === undefined ? initState : _ref$state;
+	    var _ref$actions = _ref.actions;
+	    var actions = _ref$actions === undefined ? [] : _ref$actions;
+	
+	    var newState = state ? state : initState;
+	    return new TweetStore(newState, handler, actions);
+	};
 	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.default = tweetStore;
+	exports.default = exports.TweetStoreFactory;
 
 /***/ },
 /* 12 */
@@ -14834,6 +14870,53 @@
 	  };
 	};
 
+
+/***/ },
+/* 82 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var ActionDatabase = function () {
+	    function ActionDatabase(dbName) {
+	        _classCallCheck(this, ActionDatabase);
+	
+	        this.db = typeof window === "undefined" ? mockDB : localStorage;
+	        this.dbName = dbName;
+	        var strage = JSON.parse(this.db.getItem(dbName));
+	        this.strage = strage ? strage : [];
+	    }
+	
+	    _createClass(ActionDatabase, [{
+	        key: "save",
+	        value: function save(value) {
+	            this.strage.push(value);
+	        }
+	    }, {
+	        key: "load",
+	        value: function load() {
+	            return this.strage;
+	        }
+	    }, {
+	        key: "commit",
+	        value: function commit() {
+	            this.db.setItem(this.dbName, JSON.stringify(this.strage));
+	        }
+	    }]);
+	
+	    return ActionDatabase;
+	}();
+	
+	exports.ActionDatabase = ActionDatabase;
+	var mockDB = {
+	    getItem: function getItem(dbName) {
+	        return dbName;
+	    }
+	};
 
 /***/ }
 /******/ ]);
