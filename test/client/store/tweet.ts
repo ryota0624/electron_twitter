@@ -2,7 +2,7 @@ import * as assert from 'power-assert';
 import { Map, Record } from 'immutable';
 
 import { TweetStore, handler } from '../../../client/store/tweet';
-import { AccountModel, AdminAccountModel } from '../../../client/model/user';
+import { AdminAccountModel } from '../../../client/model/user';
 import { TweetModel } from '../../../client/model/tweet';
 
 import { command } from '../../../client/flux';

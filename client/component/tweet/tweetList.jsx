@@ -2,9 +2,6 @@ import React from 'react';
 import TweetItem from './tweetItem';
 
 class TweetList extends React.Component {
-  shouldUpdateComponent() {
-    return true;
-  }
   itemToComponent(tweetItems) {
     return tweetItems.map(tweet => {
       const { text, id_str } = tweet;

@@ -25,7 +25,12 @@ export class ActionDatabase {
 
 export class LocalStoregeDatabase {
   async get(storeName) {
-    return JSON.parse(localStorage.getItem(storeName));
+    const state = JSON.parse(localStorage.getItem(storeName));
+    if (!(state instanceof Array)) {
+      localStorage.setItem(storeName, JSON.stringify([]));
+      return [];
+    }
+    return state ? state : [];
   }
   async set(storeName, state) {
     const currentState = JSON.parse(localStorage.getItem(storeName));

@@ -6,15 +6,32 @@ class TimeLine extends React.Component<any, any> {
   tweetStore: any;
   constructor(props) {
     super(props);
-    this.tweetStore = this.props.tweetStore;
     this.onChangeStore = this.onChangeStore.bind(this);
-    // this.tweetStore.addChangeListener(this.onChangeStore);
+    this.state = {
+      account: this.props.account,
+      tweet: this.props.tweet
+    }
+  }
+  componentDidMount() {
+    this.props.tweet.addChangeListener(this.onChangeStore);
+    this.props.account.addChangeListener(this.onChangeStore);
   }
   onChangeStore() {
+    this.setState({
+      account: this.props.account,
+      tweet: this.props.tweet
+    });
   }
   render() {
-    const tweetItems = this.props.tweet.getAllTweet();
-    return React.createElement(TweetList, { tweetItems });
+    const accounts = this.state.account.getAllUser();
+    const tweetItems = accounts.map(account => this.state.tweet.getAccountTimeLine(account)).toArray();
+    const tweetList = tweetItems.map((item, index) => <TweetList key={index} tweetItems={item} />)
+    return (
+      <div>
+        {tweetList}
+        {JSON.stringify(accounts)}
+      </div>
+    );
   }
 }
 

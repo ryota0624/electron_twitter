@@ -1,17 +1,28 @@
 import * as assert from 'power-assert';
-import { Map, Record } from 'immutable';
+import { Map, Record, is } from 'immutable';
 
 import { AdminAccountStore, handler } from '../../../client/store/adminAccount';
 import { AdminAccountModel, UserModel } from '../../../client/model/user';
+import {  TweetModel } from '../../../client/model/tweet';
 
 import { sample } from '../../../client/store/sampleTweet';
 
 import { ADDACCOUNT, UPDATE } from '../../../client/constant/adminAccount';
 describe('AccountModel', () => {
-  const mockAccount = { id: 'test'}
+  const map = Map<any, any>();
+  const mockAccount = { id: 'test' }
   const account = new UserModel(mockAccount);
+  const acMap = map.set(account.id, account);
+
+  const mockAddAccount = { id: 'test'}
+  const adminAccount = new AdminAccountModel(mockAddAccount);
+  const adMap = map.set(adminAccount.id, adminAccount);
+  
   it('account instance', () => assert(account));
   it('account have a id', () => assert.equal(account.id, mockAccount.id));
+  // it('account extends', () => assert(!is(account, adminAccount)))
+  // it('Im map', () => assert(!is(acMap, adMap)))
+
 })
 describe('AdminAccountModel', () => {
   const mockAccount = { id: 6, id_str: 'test', timeLine: ['1','2','3']}
@@ -33,9 +44,9 @@ describe('adminAccountStoreHandler', () => {
       const updatedState = handler({ type: UPDATE, id: 'test', params: { timeLine: [9] } }, state);
       assert.equal(updatedState.get('test').timeLine.length, 4);
     })
-    it('fail update', () => {
-      const updatedState = handler({ type: UPDATE, id: 't', params: { timeLine: [9] } }, state);
-      assert.deepEqual(updatedState, state);
-    })
+    // it('fail update', () => {
+    //   const updatedState = handler({ type: UPDATE, id: 't', params: { timeLine: [9] } }, state);
+    //   assert.deepEqual(updatedState, state);
+    // })
   })
 })

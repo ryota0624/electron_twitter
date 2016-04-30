@@ -10,7 +10,8 @@ interface tweetCollectionn extends Map<string, TweetModel>{}
 export function handler(action: any, state: tweetCollectionn) {
   switch (action.type) {
     case ADDTWEET: {
-      return state.set(action.id, new TweetModel(action.tweet));
+      const id = String(action.id)
+      return state.set(id, new TweetModel(action.tweet));
     }
   }
   return state;
@@ -18,16 +19,16 @@ export function handler(action: any, state: tweetCollectionn) {
 
 export class TweetStore extends Store<tweetCollectionn> {
   getById(id: string) {
-    return this.state.get(id);
+    return this.state.get(String(id));
   }
   getUserTimeLine(userId) {
     return this.state.filter(tweet => tweet.user.id_str === userId);
   }
   getTweetByIds(tweetIds: Array<string>) {
-    return tweetIds.map(id => this.getById(id));
+    return tweetIds.map(id => this.getById(id)).filter(item => item ? true : false);
   }
   getAccountTimeLine(account: AdminAccountModel) {
-    return this.getTweetByIds(account.timeLine);
+    return this.getTweetByIds(account.timeLine).sort(this.sortTimeStamp);
   }
   getAllTweet() {
     return this.state.toArray().sort(this.sortTimeStamp);
