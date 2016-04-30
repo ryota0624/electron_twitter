@@ -29,6 +29,9 @@ export class TweetStore extends Store<tweetCollectionn> {
   getAccountTimeLine(account: AdminAccountModel) {
     return this.getTweetByIds(account.timeLine);
   }
+  getAllTweet() {
+    return this.state.toArray();
+  }
 }
 
 const initState = Map<string, TweetModel>()

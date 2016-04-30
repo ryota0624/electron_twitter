@@ -1,4 +1,4 @@
-import flux from './flux';
+import { StoreContainer } from './flux';
 import adminStore from './store/adminAccount';
 import tweetStoreFactory from './store/tweet';
 import { socketConnect } from './service/socket';
@@ -10,12 +10,12 @@ import { app } from './component/router';
 
 const appInit = async () => {
   const tweetDB = new ActionDatabase('tweet', new LocalStoregeDatabase());
-  console.log(tweetDB)
   await tweetDB.init();
   let oldActions = await tweetDB.load();
   oldActions = oldActions.filter(action => action);
   const tweetStore = tweetStoreFactory({ actions: oldActions });
-  console.log(tweetStore.get().toJS())
+  const storeContainer = new StoreContainer({ tweet: tweetStore });
+  console.log(storeContainer)
   // tweetStore.addChangeListener(() => console.log(tweetStore.get().toJS()));
   // tweetStore.addChangeListener(() => {
   //   tweetDB.add(tweetStore.lastAction);
@@ -23,8 +23,8 @@ const appInit = async () => {
   // });
   // adminStore.addChangeListener(() => console.log(adminStore.get().toJS()));
 
-  // socketConnect();
-  render(app({ tweetStore }), document.getElementById('app'));
+  //socketConnect();
+  render(app(storeContainer), document.getElementById('app'));
 }
 appInit();
 

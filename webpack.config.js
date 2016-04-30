@@ -9,6 +9,11 @@ module.exports = {
   module: {
     loaders: [
       {
+        test: /\.js(x?)$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+      },
+      {
         test: /\.ts(x?)$/,
         exclude: /node_modules/,
         loader: 'ts-loader',
@@ -17,6 +22,6 @@ module.exports = {
   },
   resolve: {
     // requireやimport時の拡張子を省略
-    extensions: ['.tsx', '.ts', '', '.js', '.jsx'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx', ''],
   },
 };

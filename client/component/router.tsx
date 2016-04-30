@@ -1,6 +1,6 @@
 import * as React from 'react'
-import { hashHistory, IndexRoute, Router, Route, Link } from 'react-router'
-import Root, {Provider} from './smartComponent/root';
+import { hashHistory, IndexRoute, Router, Route, Link } from 'react-router';
+import Provider from './smartComponent/root';
 import TimeLine from './smartComponent/timeLine';
 export const app = (store) => {
   return (

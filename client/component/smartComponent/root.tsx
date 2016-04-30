@@ -1,9 +1,8 @@
 import * as React from 'react'
-import { ConnectComponent, provider } from './smartComponent';
+import { provider } from '../../flux';
 
 class Root extends React.Component<any, any> {
   render() {
-    console.log(this)
     return (
       <div>
         Root
@@ -13,4 +12,4 @@ class Root extends React.Component<any, any> {
   }
 }
 
-export const Provider = provider.bind(this, Root);
+export default provider.bind(this, Root);

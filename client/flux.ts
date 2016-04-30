@@ -1,9 +1,11 @@
 import { EventEmitter } from "events";
-const CHANGE_EVENT = 'change';
+import * as React from 'react'
 import * as flux from "flux";
+const CHANGE_EVENT = 'change';
+import * as Im from 'immutable';
+
 const Dispatcher = flux.Dispatcher;
 export const dispatcher = new Dispatcher();
-import * as Im from 'immutable';
 
 const dispatch = dispatcher.dispatch.bind(dispatcher);
 export const command = (type: string, props?) => {
@@ -11,7 +13,7 @@ export const command = (type: string, props?) => {
   dispatch(action);
 }
 
-class Store extends EventEmitter {
+export class ChangeEmitter extends EventEmitter {
   emitChange() {
     this.emit(CHANGE_EVENT);
   }
@@ -23,7 +25,7 @@ class Store extends EventEmitter {
   }
 }
 
-export default class StateStore<T> extends Store {
+export default class StateStore<T> extends ChangeEmitter {
   state: T;
   _handler: (any, T) => T;
   actions: Im.List<any>;
@@ -57,9 +59,85 @@ export default class StateStore<T> extends Store {
   }
 }
 
-export class StateContainer extends EventEmitter {
-  stores: ;
+export class StoreContainer extends ChangeEmitter {
+  stores;
   constructor(stores) {
     super();
+    this.stores = stores;
+    const keys = Object.keys(this.stores);
+    keys.forEach(key => {
+      this.stores[key].addChangeListener(this.emitChange.bind(this));
+    })
+  }
+  getStore(storeName) {
+    return this.stores[storeName];
+  }
+  getAllStore() {
+    return this.stores
+  }
+}
+
+export const connect = (component) => {
+  return class ConnectComponent extends React.Component<any, any> {
+    constructor(props, context) {
+      super(props, context);
+      this.context = context;
+      this.onChange = this.onChange.bind(this);
+      this.context.storeContainer.addChangeListener(this.onChange);
+      this.state = {
+        storeContainer: this.context.storeContainer
+      }
+    }
+    onChange() {
+      this.setState({ storeContainer: this.context.storeContainer });
+    }
+    static get contextTypes() {
+      return {
+        router: React.PropTypes.any,
+        storeContainer: React.PropTypes.any,
+      }
+    }
+    render() {
+      const storeContainer = this.state.storeContainer;
+      cosnt stores = this.state.storeContainer.getAllStore();
+      const router = this.context.router;
+      return React.createElement(component, { storeContainer, router });
+    }
+    context: {
+      router: any;
+      storeContainer: StoreContainer;
+    }
+    props: {
+      storeContainer: StoreContainer;
+    }
+    state: {
+      storeContainer: StoreContainer;
+    }
+  }
+}
+
+export function provider(component, storeContainer: StoreContainer) {
+  return class Provider extends React.Component<any, any> {
+    static get contextTypes() {
+      return {
+        router: React.PropTypes.any,
+        storeContainer: React.PropTypes.any,
+      }
+    }
+    static get childContextTypes() {
+      return {
+        storeContainer: React.PropTypes.any
+      }
+    }
+    context: {
+      router: any
+      storeContainer: any
+    }
+    getChildContext() {
+      return { storeContainer }
+    }
+    render() {
+      return React.createElement(component, { storeContainer }, this.props.children);
+    }
   }
 }

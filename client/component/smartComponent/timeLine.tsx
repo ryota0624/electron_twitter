@@ -1,25 +1,13 @@
 import * as React from 'react'
-import { ConnectComponent, provider } from './smartComponent';
+import { connect } from '../../flux';
+import TweetList from '../tweet/tweetList.jsx';
 
-// export default (store) => {
-//   return class TimeLine extends ConnectComponent<any, any> {
-//     render() {
-//       const tweetStore = JSON.stringify(store.tweetStore.get().toJS());
-//       return (
-//         <div>
-//           {tweetStore}
-//         </div>
-//       )
-//     }
-//   }
-// }
-
-export default class TimeLine extends ConnectComponent<any, any> {
+class TimeLine extends React.Component<any, any> {
   render() {
-      return (
-        <div>
-          
-        </div>
-      )
-    }
+    const tweetList = this.props.storeContainer.getStore('tweet').getAllTweet();
+    console.log(tweetList)
+    return null
   }
+}
+
+export default connect(TimeLine);
