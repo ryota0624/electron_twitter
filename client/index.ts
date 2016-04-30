@@ -12,21 +12,22 @@ const appInit = async () => {
   const tweetDB = new ActionDatabase('tweet', new LocalStoregeDatabase());
   await tweetDB.init();
   let oldActions = await tweetDB.load();
-  oldActions = oldActions.filter(action => action);
   const tweetStore = tweetStoreFactory({ actions: oldActions });
-  const storeContainer = new StoreContainer({ tweet: tweetStore });
-  console.log(storeContainer)
-  // tweetStore.addChangeListener(() => console.log(tweetStore.get().toJS()));
-  // tweetStore.addChangeListener(() => {
-  //   tweetDB.add(tweetStore.lastAction);
-  //   tweetDB.commit();
-  // });
-  // adminStore.addChangeListener(() => console.log(adminStore.get().toJS()));
 
-  //socketConnect();
+
+  const storeContainer = new StoreContainer({ tweet: tweetStore });
+  
+  tweetStore.addChangeListener(() => {
+    tweetDB.add(tweetStore.lastAction);
+    tweetDB.commit();
+  });
+  socketConnect();
   render(app(storeContainer), document.getElementById('app'));
 }
 appInit();
+
+
+
 
 // const status = new TweetModel({ text: new Date() });
 // // twAction.postTweet('2979592160', status).then(st => {

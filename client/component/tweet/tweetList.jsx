@@ -7,16 +7,16 @@ class TweetList extends React.Component {
   }
   itemToComponent(tweetItems) {
     return tweetItems.map(tweet => {
-      const { text } = tweet;
+      const { text, id_str } = tweet;
       return (
-        <TweetItem text={text} />
+        <TweetItem text={text} key={id_str} />
       );
     });
   }
   render() {
     const tweetComponents = this.itemToComponent(this.props.tweetItems);
     return (
-      <ul className="uk-list">
+      <ul className="uk-list-line">
         {tweetComponents}
       </ul>
     );

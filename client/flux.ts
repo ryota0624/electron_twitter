@@ -99,9 +99,10 @@ export const connect = (component) => {
     }
     render() {
       const storeContainer = this.state.storeContainer;
-      cosnt stores = this.state.storeContainer.getAllStore();
+      const stores = this.state.storeContainer.getAllStore();
       const router = this.context.router;
-      return React.createElement(component, { storeContainer, router });
+      stores.router = router;
+      return React.createElement(component, stores);
     }
     context: {
       router: any;

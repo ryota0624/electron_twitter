@@ -19,7 +19,8 @@ const initialModel = {
   retweeted_status: {
     id: 0,
     id_str: '',
-  }
+  },
+  timestamp_ms: 0
 }
 
 export class TweetModel extends Record(initialModel) {
@@ -32,6 +33,7 @@ export class TweetModel extends Record(initialModel) {
   in_reply_to_user_id: number;
   in_reply_to_user_id_str: string;
   in_reply_to_screen_name: string;
+  timestamp_ms: string;
   user: {
     id: number;
     id_str: string;

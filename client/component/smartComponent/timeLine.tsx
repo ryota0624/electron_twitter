@@ -1,12 +1,20 @@
 import * as React from 'react'
 import { connect } from '../../flux';
-import TweetList from '../tweet/tweetList.jsx';
-
+import TweetListComponent from '../tweet/tweetList.jsx';
+const TweetList: any = TweetListComponent;
 class TimeLine extends React.Component<any, any> {
+  tweetStore: any;
+  constructor(props) {
+    super(props);
+    this.tweetStore = this.props.tweetStore;
+    this.onChangeStore = this.onChangeStore.bind(this);
+    // this.tweetStore.addChangeListener(this.onChangeStore);
+  }
+  onChangeStore() {
+  }
   render() {
-    const tweetList = this.props.storeContainer.getStore('tweet').getAllTweet();
-    console.log(tweetList)
-    return null
+    const tweetItems = this.props.tweet.getAllTweet();
+    return React.createElement(TweetList, { tweetItems });
   }
 }
 

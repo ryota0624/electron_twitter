@@ -1,7 +1,7 @@
 import Store from '../flux';
 import { Map } from 'immutable';
 import { ADDACCOUNT, UPDATE } from '../constant/adminAccount';
-import { AccountModel, AdminAccountModel } from '../model/account';
+import { AdminAccountModel } from '../model/user';
 
 interface accountCollectionn extends Map<string, AdminAccountModel>{}
 
@@ -31,10 +31,13 @@ const initAccounts = () => {
   const accounts = {};
   for (let i of keys) {
     const account = JSON.parse(accountJSON[i]._raw);
-    accounts[i] = new AccountModel(account);
+    accounts[i] = new AdminAccountModel(account);
   }
   return accounts;
 }
 const initState = Map<string, AdminAccountModel>(initAccounts());
-const adminAccountStore = new AdminAccountStore(initState, handler);
-export default adminAccountStore;
+const AdminAccountStoreFactory = ({state = initState, actions = []}) => {
+  const newState = state ? state : initState;
+  return new AdminAccountStore(newState, handler, actions);
+}
+export default AdminAccountStoreFactory;

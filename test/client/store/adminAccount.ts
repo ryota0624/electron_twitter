@@ -2,14 +2,14 @@ import * as assert from 'power-assert';
 import { Map, Record } from 'immutable';
 
 import { AdminAccountStore, handler } from '../../../client/store/adminAccount';
-import { AdminAccountModel, AccountModel } from '../../../client/model/account';
+import { AdminAccountModel, UserModel } from '../../../client/model/user';
 
 import { sample } from '../../../client/store/sampleTweet';
 
 import { ADDACCOUNT, UPDATE } from '../../../client/constant/adminAccount';
 describe('AccountModel', () => {
   const mockAccount = { id: 'test'}
-  const account = new AccountModel(mockAccount);
+  const account = new UserModel(mockAccount);
   it('account instance', () => assert(account));
   it('account have a id', () => assert.equal(account.id, mockAccount.id));
 })

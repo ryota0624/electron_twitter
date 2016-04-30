@@ -42,7 +42,7 @@ module.exports = (cb) => {
   db.init().then(() => db.load('account'))
     .then((accounts) => {
       const keys = Object.keys(accounts);
-      return keys.forEach(key => twitter.setAccount(key, accounts[key], { setStream: false }));
+      return keys.forEach(key => twitter.setAccount(key, accounts[key], { setStream: true }));
     })
     .then(() => server.listen(3000, () => cb())).catch(err => console.log(err));
 };

@@ -2,7 +2,7 @@ import Store from '../flux';
 import { Map, Record } from 'immutable';
 import { ADDTWEET } from '../constant/tweet';
 import { TweetModel } from '../model/tweet';
-import { AccountModel, AdminAccountModel } from '../model/account';
+import { AdminAccountModel } from '../model/user';
 
 
 interface tweetCollectionn extends Map<string, TweetModel>{}
@@ -30,12 +30,14 @@ export class TweetStore extends Store<tweetCollectionn> {
     return this.getTweetByIds(account.timeLine);
   }
   getAllTweet() {
-    return this.state.toArray();
+    return this.state.toArray().sort(this.sortTimeStamp);
+  }
+  sortTimeStamp(a, b) {
+    return Number(b.timestamp_ms) - Number(a.timestamp_ms) ;
   }
 }
 
 const initState = Map<string, TweetModel>()
-// const tweetStore = new TweetStore(initState, handler);
 export const TweetStoreFactory = ({state = initState, actions = []}) => {
   const newState = state ? state : initState;
   return new TweetStore(newState, handler, actions);

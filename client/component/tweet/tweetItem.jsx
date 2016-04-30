@@ -6,9 +6,12 @@ class TweetItem extends React.Component {
   }
   render() {
     return (
-      <div className="uk-width-medium-1-2">
-        <div className="uk-panel">{this.props.text}</div>
-      </div>
+      <ul>
+        <div className="uk-panel uk-panel-box">
+          <h3 className="uk-panel-title">...</h3>
+          {this.props.text}
+        </div>
+      </ul>
     );
   }
 }

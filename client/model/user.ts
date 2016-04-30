@@ -1,18 +1,23 @@
 import { Record } from 'immutable';
 
-const AccountDefaultProperty = {
+const UserDefaultProperty = {
   id: 0,
   id_str: ''
 }
 
-export class AccountModel extends Record(AccountDefaultProperty) {
+export class UserModel extends Record(UserDefaultProperty) {
   id: number;
   id_str: string;
+  name: string;
+  description: string;
+  profile_background_image_url: string;
+  profile_image_url: string;
+  screen_name: string;
 }
 
-const AdminDefaultProperty = Object.assign({}, AccountDefaultProperty, { timeLine: [] });
+const AdminDefaultProperty = Object.assign({}, UserDefaultProperty, { timeLine: [] });
 
-export class AdminAccountModel extends AccountModel {
+export class AdminAccountModel extends UserModel {
   timeLine: Array<string>;
   constructor(args = AdminDefaultProperty) {
     super(args);
