@@ -11,7 +11,19 @@ export const command = (type: string, props?) => {
   dispatch(action);
 }
 
-export default class StateStore<T> extends EventEmitter {
+class Store extends EventEmitter {
+  emitChange() {
+    this.emit(CHANGE_EVENT);
+  }
+  addChangeListener(callback) {
+    this.on(CHANGE_EVENT, callback);
+  }
+  removeChangeListener(callback) {
+    this.removeListener(CHANGE_EVENT, callback);
+  }
+}
+
+export default class StateStore<T> extends Store {
   state: T;
   _handler: (any, T) => T;
   actions: Im.List<any>;
@@ -28,11 +40,11 @@ export default class StateStore<T> extends EventEmitter {
     return this.actions.reduce((state, action) => this._handler(action, state), this.state);
   }
   private register(action) {
-    this.lastAction = action;
-    this.actions = this.actions.push(action);
     const state = this.state;
     const nextState = this._handler(action, state);
     if (!Im.is(nextState, state)) {
+      this.lastAction = action;
+      this.actions = this.actions.push(action);
       this.state = nextState;
       this.emitChange();
     }
@@ -43,13 +55,11 @@ export default class StateStore<T> extends EventEmitter {
   get() {
     return this.state;
   }
-  emitChange() {
-    this.emit(CHANGE_EVENT);
-  }
-  addChangeListener(callback) {
-    this.on(CHANGE_EVENT, callback);
-  }
-  removeChangeListener(callback) {
-    this.removeListener(CHANGE_EVENT, callback);
+}
+
+export class StateContainer extends EventEmitter {
+  stores: ;
+  constructor(stores) {
+    super();
   }
 }

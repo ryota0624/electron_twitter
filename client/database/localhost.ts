@@ -1,21 +1,36 @@
 export class ActionDatabase {
-  dbName: string;
+  storeName: string;
+  commitedStrage: Array<any>;
   strage: Array<any>;
   db: any;
-  constructor(dbName) {
-    this.db = typeof window === "undefined" ? mockDB : localStorage;
-    this.dbName = dbName;
-    const strage = JSON.parse(this.db.getItem(dbName));
-    this.strage = strage ? strage : [];
+  constructor(storeName, db) {
+    this.db = db;
+    this.storeName = storeName;
+    this.commitedStrage = [];
+    this.strage = [];
   }
-  save(value) {
+  async init() {
+    this.commitedStrage = await this.db.get(this.storeName);
+  }
+  add(value) {
     this.strage.push(value)
   }
   load() {
-    return this.strage
+    return [].concat(this.strage, this.commitedStrage);
   }
-  commit() {
-    this.db.setItem(this.dbName, JSON.stringify(this.strage));
+  async commit() {
+    await this.db.set(this.storeName, this.strage);
+  }
+}
+
+export class LocalStoregeDatabase {
+  async get(storeName) {
+    return JSON.parse(localStorage.getItem(storeName));
+  }
+  async set(storeName, state) {
+    const currentState = JSON.parse(localStorage.getItem(storeName));
+    const newState = [].concat(currentState, state);
+    localStorage.setItem(storeName, JSON.stringify(newState));
   }
 }
 

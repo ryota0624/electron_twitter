@@ -4,21 +4,30 @@ import tweetStoreFactory from './store/tweet';
 import { socketConnect } from './service/socket';
 import * as twAction from './action/tweet';
 import { TweetModel } from './model/tweet';
-import { ActionDatabase } from './database/localhost';
+import { ActionDatabase, LocalStoregeDatabase } from './database/localhost';
+import { render } from 'react-dom';
+import { app } from './component/router';
 
-const tweetDB = new ActionDatabase('tweet');
-const oldActins = tweetDB.load();
-const tweetStore = tweetStoreFactory({ actions: oldActins });
+const appInit = async () => {
+  const tweetDB = new ActionDatabase('tweet', new LocalStoregeDatabase());
+  console.log(tweetDB)
+  await tweetDB.init();
+  let oldActions = await tweetDB.load();
+  oldActions = oldActions.filter(action => action);
+  const tweetStore = tweetStoreFactory({ actions: oldActions });
+  console.log(tweetStore.get().toJS())
+  // tweetStore.addChangeListener(() => console.log(tweetStore.get().toJS()));
+  // tweetStore.addChangeListener(() => {
+  //   tweetDB.add(tweetStore.lastAction);
+  //   tweetDB.commit();
+  // });
+  // adminStore.addChangeListener(() => console.log(adminStore.get().toJS()));
 
-tweetStore.addChangeListener(() => console.log(tweetStore.get().toJS()));
-tweetStore.addChangeListener(() => {
-  tweetDB.save(tweetStore.lastAction);
-  tweetDB.commit();
-});
+  // socketConnect();
+  render(app({ tweetStore }), document.getElementById('app'));
+}
+appInit();
 
-adminStore.addChangeListener(() => console.log(adminStore.get().toJS()));
-
-socketConnect();
 // const status = new TweetModel({ text: new Date() });
 // // twAction.postTweet('2979592160', status).then(st => {
 // //   const repStatus = new TweetModel(st);

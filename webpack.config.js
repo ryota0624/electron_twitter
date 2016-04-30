@@ -1,7 +1,7 @@
 const path = require('path');
 // const webpack = require('webpack');
 module.exports = {
-  entry: path.resolve(__dirname, 'client', 'index.ts'),
+  entry: [path.resolve(__dirname, 'client', 'index.ts')],
   output: {
     filename: 'app.js', path: './public/',
   },
@@ -11,7 +11,7 @@ module.exports = {
       {
         test: /\.ts(x?)$/,
         exclude: /node_modules/,
-        loader: 'babel!ts-loader',
+        loader: 'ts-loader',
       },
     ],
   },
