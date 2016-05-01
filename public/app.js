@@ -63,6 +63,7 @@
 	const flux_1 = __webpack_require__(2);
 	const adminAccount_1 = __webpack_require__(39);
 	const tweet_1 = __webpack_require__(42);
+	const user_1 = __webpack_require__(313);
 	const socket_1 = __webpack_require__(45);
 	const localhost_1 = __webpack_require__(113);
 	const react_dom_1 = __webpack_require__(114);
@@ -74,36 +75,30 @@
 	    const tweetStore = tweet_1.default({ actions: tweetOldActions });
 	    const accountDB = new localhost_1.ActionDatabase('account', new localhost_1.LocalStoregeDatabase());
 	    yield accountDB.init();
-	    let accountOldActions = yield accountDB.load();
+	    const accountOldActions = yield accountDB.load();
 	    const accountStore = adminAccount_1.default({ actions: accountOldActions });
-	    const storeContainer = new flux_1.StoreContainer({ tweet: tweetStore, account: accountStore });
+	    const userDB = new localhost_1.ActionDatabase('user', new localhost_1.LocalStoregeDatabase());
+	    yield userDB.init();
+	    const userOldActions = yield userDB.load();
+	    const userStore = user_1.default({ actions: userOldActions });
+	    const storeContainer = new flux_1.StoreContainer({ tweet: tweetStore, account: accountStore, user: userStore });
 	    tweetStore.addChangeListener(() => {
 	        tweetDB.add(tweetStore.lastAction);
 	        tweetDB.commit();
 	    });
 	    accountStore.addChangeListener(() => {
-	        console.log(accountStore.lastAction);
 	        accountDB.add(accountStore.lastAction);
 	        accountDB.commit();
+	    });
+	    userStore.addChangeListener(() => {
+	        console.log(userStore.lastAction);
+	        userDB.add(userStore.lastAction);
+	        userDB.commit();
 	    });
 	    socket_1.socketConnect();
 	    react_dom_1.render(router_1.app(storeContainer), document.getElementById('app'));
 	});
 	appInit();
-	// const status = new TweetModel({ text: new Date() });
-	// // twAction.postTweet('2979592160', status).then(st => {
-	// //   const repStatus = new TweetModel(st);
-	// //   console.log(repStatus.replay(status).post());
-	// //   twAction.postTweet('2979592160', repStatus.replay(status))
-	// //     .then(res => {
-	// //       console.log(res);
-	// //       return res;
-	// //     }).then(rpst => {
-	// //       // twAction.destroyTweet('2979592160', repStatus);
-	// //       // twAction.destroyTweet('2979592160', new TweetModel(rpst));
-	// //     })
-	// //   // twAction.destroyTweet('2979592160', repStatus).then(res => console.log(res));
-	// // }); 
 
 
 /***/ },
@@ -9605,10 +9600,12 @@
 	const io = __webpack_require__(46);
 	const adminAccount_1 = __webpack_require__(93);
 	const tweet_1 = __webpack_require__(94);
+	const user_1 = __webpack_require__(315);
 	var socket = io.connect();
 	exports.socketConnect = () => socket.on('tweet', (data) => {
 	    const { account, tweet } = data;
 	    tweet_1.addTweet(tweet.id_str, tweet);
+	    user_1.addUser(tweet.user.id_str, tweet.user);
 	    adminAccount_1.updateAccount(account.id, { timeLine: [tweet.id_str] });
 	});
 
@@ -40438,6 +40435,59 @@
 	};
 	
 	exports.default = AccountTimeLine;
+
+/***/ },
+/* 313 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	const flux_1 = __webpack_require__(2);
+	const immutable_1 = __webpack_require__(38);
+	const user_1 = __webpack_require__(41);
+	const user_2 = __webpack_require__(314);
+	function handler(action, state) {
+	    switch (action.type) {
+	        case user_2.ADDUSER: {
+	            return state.set(action.id, new user_1.UserModel(action.user));
+	        }
+	    }
+	    return state;
+	}
+	exports.handler = handler;
+	class UserStore extends flux_1.default {
+	    getById(id) {
+	        return this.state.get(id);
+	    }
+	}
+	exports.UserStore = UserStore;
+	const initState = immutable_1.Map();
+	const UserStoreFactory = ({ state = initState, actions = [] }) => {
+	    const newState = state ? state : initState;
+	    return new UserStore(newState, handler, actions);
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = UserStoreFactory;
+
+
+/***/ },
+/* 314 */
+/***/ function(module, exports) {
+
+	"use strict";
+	exports.ADDUSER = '__adduser__';
+
+
+/***/ },
+/* 315 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	const flux_1 = __webpack_require__(2);
+	const user_1 = __webpack_require__(314);
+	exports.addUser = (id, user) => {
+	    flux_1.command(user_1.ADDUSER, { user: user, id: id });
+	};
+
 
 /***/ }
 /******/ ]);
