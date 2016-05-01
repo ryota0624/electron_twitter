@@ -20,6 +20,8 @@ export class ActionDatabase {
   }
   async commit() {
     await this.db.set(this.storeName, this.strage);
+    this.commitedStrage = this.load();
+    this.strage = [];
   }
 }
 
@@ -33,9 +35,9 @@ export class LocalStoregeDatabase {
     return state ? state : [];
   }
   async set(storeName, state) {
-    // const currentState = JSON.parse(localStorage.getItem(storeName));
-    // const newState = [].concat(currentState, state);
-    localStorage.setItem(storeName, JSON.stringify(state));
+    const currentState = JSON.parse(localStorage.getItem(storeName));
+    const newState = [].concat(currentState, state);
+    localStorage.setItem(storeName, JSON.stringify(newState));
   }
 }
 

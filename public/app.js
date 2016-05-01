@@ -9569,6 +9569,11 @@
 	    retweeted() {
 	        return this.retweeted_status.id === 0 ? false : true;
 	    }
+	    setPost(text) {
+	        return new TweetModel({
+	            text: text
+	        });
+	    }
 	    post() {
 	        return {
 	            status: this.text,
@@ -9604,10 +9609,17 @@
 	var socket = io.connect();
 	exports.socketConnect = () => socket.on('tweet', (data) => {
 	    const { account, tweet } = data;
-	    tweet_1.addTweet(tweet.id_str, tweet);
-	    user_1.addUser(tweet.user.id_str, tweet.user);
+	    sendTweet(tweet);
 	    adminAccount_1.updateAccount(account.id, { timeLine: [tweet.id_str] });
 	});
+	function sendTweet(tweet) {
+	    tweet_1.addTweet(tweet.id_str, tweet);
+	    user_1.addUser(tweet.user.id_str, tweet.user);
+	    const retweet = tweet.retweeted_status;
+	    if (retweet) {
+	        sendTweet(retweet);
+	    }
+	}
 
 
 /***/ },
@@ -18286,6 +18298,8 @@
 	    commit() {
 	        return __awaiter(this, void 0, void 0, function* () {
 	            yield this.db.set(this.storeName, this.strage);
+	            this.commitedStrage = this.load();
+	            this.strage = [];
 	        });
 	    }
 	}
@@ -18303,9 +18317,9 @@
 	    }
 	    set(storeName, state) {
 	        return __awaiter(this, void 0, void 0, function* () {
-	            // const currentState = JSON.parse(localStorage.getItem(storeName));
-	            // const newState = [].concat(currentState, state);
-	            localStorage.setItem(storeName, JSON.stringify(state));
+	            const currentState = JSON.parse(localStorage.getItem(storeName));
+	            const newState = [].concat(currentState, state);
+	            localStorage.setItem(storeName, JSON.stringify(newState));
 	        });
 	    }
 	}
@@ -40194,28 +40208,35 @@
 	        this.onChangeStore = this.onChangeStore.bind(this);
 	        this.state = {
 	            account: this.props.account,
-	            tweet: this.props.tweet
+	            tweet: this.props.tweet,
+	            user: this.props.user
 	        };
 	        this.fetchAccount = this.fetchAccount.bind(this);
+	        this.getTweetById = this.getTweetById.bind(this);
 	    }
 	    componentDidMount() {
 	        this.props.tweet.addChangeListener(this.onChangeStore);
 	        this.props.account.addChangeListener(this.onChangeStore);
+	        this.props.user.addChangeListener(this.onChangeStore);
 	    }
 	    onChangeStore() {
 	        this.setState({
 	            account: this.props.account,
-	            tweet: this.props.tweet
+	            tweet: this.props.tweet,
+	            user: this.props.user
 	        });
 	    }
 	    fetchAccount(accountId) {
-	        return this.state.account.getById(accountId);
+	        return this.state.user.getById(accountId);
+	    }
+	    getTweetById(tweetId) {
+	        return this.state.tweet.getById(tweetId);
 	    }
 	    render() {
 	        const accounts = this.state.account.getAllUser();
 	        const tweetItems = accounts
 	            .map(account => ({ tweets: this.state.tweet.getAccountTimeLine(account), account: account })).toArray()
-	            .map((item, index) => React.createElement(AccountTimeLine, {key: index, tweetItems: item.tweets, account: item.account, fetchAccount: this.fetchAccount}));
+	            .map((item, index) => React.createElement(AccountTimeLine, {key: index, tweetItems: item.tweets, account: item.account, fetchAccount: this.fetchAccount, getTweetById: this.getTweetById}));
 	        return (React.createElement("div", null, tweetItems));
 	    }
 	}
@@ -40268,7 +40289,12 @@
 	      return tweetItems.map(function (tweet) {
 	        var id_str = tweet.id_str;
 	
-	        return _react2.default.createElement(_tweetItem2.default, { tweet: tweet, key: id_str, fetchAccount: _this2.props.fetchAccount });
+	        return _react2.default.createElement(_tweetItem2.default, {
+	          tweet: tweet,
+	          key: id_str,
+	          getTweetById: _this2.props.getTweetById,
+	          fetchAccount: _this2.props.fetchAccount
+	        });
 	      });
 	    }
 	  }, {
@@ -40277,7 +40303,7 @@
 	      var tweetComponents = this.itemToComponent(this.props.tweetItems);
 	      return _react2.default.createElement(
 	        'ul',
-	        { className: 'uk-list-line' },
+	        { className: 'uk-list uk-list-line' },
 	        tweetComponents
 	      );
 	    }
@@ -40291,7 +40317,8 @@
 	};
 	TweetList.propTypes = {
 	  tweetItems: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.any),
-	  fetchAccount: _react2.default.PropTypes.any
+	  fetchAccount: _react2.default.PropTypes.any,
+	  getTweetById: _react2.default.PropTypes.any
 	};
 	
 	exports.default = TweetList;
@@ -40300,7 +40327,7 @@
 /* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -40311,6 +40338,10 @@
 	var _react = __webpack_require__(4);
 	
 	var _react2 = _interopRequireDefault(_react);
+	
+	var _tweet = __webpack_require__(44);
+	
+	var _user = __webpack_require__(41);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40330,30 +40361,63 @@
 	  }
 	
 	  _createClass(TweetItem, [{
-	    key: "shouldUpdateComponent",
+	    key: 'shouldUpdateComponent',
 	    value: function shouldUpdateComponent() {
 	      return true;
 	    }
 	  }, {
-	    key: "render",
-	    value: function render() {
+	    key: 'renderRetweet',
+	    value: function renderRetweet(tweet) {
+	      var retweetId = tweet.retweeted ? tweet.retweeted_status.id_str : null;
+	      if (!retweetId) return null;
 	      var _props = this.props;
+	      var getTweetById = _props.getTweetById;
 	      var fetchAccount = _props.fetchAccount;
-	      var tweet = _props.tweet;
 	
-	      var account = fetchAccount(tweet.id_str);
+	      var retweet = getTweetById(retweetId);
 	      return _react2.default.createElement(
-	        "ul",
+	        'ul',
+	        null,
+	        _react2.default.createElement(TweetItem, {
+	          tweet: retweet,
+	          getTweetById: getTweetById,
+	          fetchAccount: fetchAccount
+	        })
+	      );
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props2 = this.props;
+	      var fetchAccount = _props2.fetchAccount;
+	      var tweet = _props2.tweet;
+	
+	      var account = fetchAccount(tweet.user.id_str);
+	      account = account instanceof _user.UserModel ? account : new _user.UserModel();
+	      var retweetComponent = this.renderRetweet.bind(this)(tweet);
+	      return _react2.default.createElement(
+	        'li',
 	        null,
 	        _react2.default.createElement(
-	          "div",
-	          { className: "uk-panel uk-panel-box" },
+	          'div',
+	          { className: 'uk-panel' },
 	          _react2.default.createElement(
-	            "h3",
-	            { className: "uk-panel-title" },
-	            JSON.stringify(account)
+	            'h3',
+	            { className: 'uk-panel-title' },
+	            _react2.default.createElement('img', { src: account.profile_image_url, alt: 'hoge' }),
+	            account.name
 	          ),
-	          JSON.stringify(this.props.tweet.text)
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            this.props.tweet.text
+	          ),
+	          retweetComponent,
+	          _react2.default.createElement(
+	            'div',
+	            null,
+	            'fav'
+	          )
 	        )
 	      );
 	    }
@@ -40364,7 +40428,11 @@
 	
 	TweetItem.propTypes = {
 	  tweet: _react2.default.PropTypes.any,
-	  fetchAccount: _react2.default.PropTypes.any
+	  fetchAccount: _react2.default.PropTypes.any,
+	  getTweetById: _react2.default.PropTypes.any
+	};
+	TweetItem.defaultProps = {
+	  tweet: new _tweet.TweetModel()
 	};
 	exports.default = TweetItem;
 
@@ -40390,6 +40458,14 @@
 	
 	var _user = __webpack_require__(41);
 	
+	var _tweet = __webpack_require__(44);
+	
+	var _postForm = __webpack_require__(316);
+	
+	var _postForm2 = _interopRequireDefault(_postForm);
+	
+	var _tweet2 = __webpack_require__(94);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -40398,24 +40474,67 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
+	var accountComponent = function accountComponent(props, click) {
+	  var name = props.name;
+	  var screen_name = props.screen_name;
+	  var profile_image_url = props.profile_image_url;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: "uk-block-muted" },
+	    _react2.default.createElement('img', { src: profile_image_url, alt: 'hoge' }),
+	    _react2.default.createElement(
+	      'strong',
+	      null,
+	      name
+	    ),
+	    _react2.default.createElement(
+	      'span',
+	      null,
+	      screen_name
+	    ),
+	    _react2.default.createElement(_postForm2.default, { onClickPost: click })
+	  );
+	};
+	
 	var AccountTimeLine = function (_React$Component) {
 	  _inherits(AccountTimeLine, _React$Component);
 	
 	  function AccountTimeLine(props) {
 	    _classCallCheck(this, AccountTimeLine);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AccountTimeLine).call(this, props));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(AccountTimeLine).call(this, props));
+	
+	    _this.tweetPost = _this.tweetPost.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(AccountTimeLine, [{
+	    key: 'tweetPost',
+	    value: function tweetPost(text) {
+	      var tweet = new _tweet.TweetModel({ text: text });
+	      (0, _tweet2.postTweet)(this.props.account.id_str, tweet);
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var tweetItems = this.props.tweetItems;
+	      var _props = this.props;
+	      var tweetItems = _props.tweetItems;
+	      var account = _props.account;
 	
 	      return _react2.default.createElement(
 	        'div',
-	        null,
-	        _react2.default.createElement(_tweetList2.default, { tweetItems: tweetItems, fetchAccount: this.props.fetchAccount })
+	        { className: 'uk-block' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'uk-container' },
+	          accountComponent(account, this.tweetPost),
+	          _react2.default.createElement(_tweetList2.default, {
+	            tweetItems: tweetItems,
+	            fetchAccount: this.props.fetchAccount,
+	            getTweetById: this.props.getTweetById
+	          })
+	        )
 	      );
 	    }
 	  }]);
@@ -40431,7 +40550,8 @@
 	AccountTimeLine.propTypes = {
 	  tweetItems: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.any),
 	  account: _react2.default.PropTypes.any,
-	  fetchAccount: _react2.default.PropTypes.any
+	  fetchAccount: _react2.default.PropTypes.any,
+	  getTweetById: _react2.default.PropTypes.any
 	};
 	
 	exports.default = AccountTimeLine;
@@ -40488,6 +40608,100 @@
 	    flux_1.command(user_1.ADDUSER, { user: user, id: id });
 	};
 
+
+/***/ },
+/* 316 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PostForm = function (_React$Component) {
+	  _inherits(PostForm, _React$Component);
+	
+	  function PostForm(props) {
+	    _classCallCheck(this, PostForm);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PostForm).call(this, props));
+	
+	    _this.state = {
+	      text: ''
+	    };
+	    _this.onChangeText = _this.onChangeText.bind(_this);
+	    _this.onClickPost = _this.onClickPost.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(PostForm, [{
+	    key: 'onChangeText',
+	    value: function onChangeText(e) {
+	      this.setState({ text: e.target.value });
+	    }
+	  }, {
+	    key: 'onClickPost',
+	    value: function onClickPost() {
+	      this.props.onClickPost(this.state.text);
+	      this.setState({ text: '' });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var text = this.state.text;
+	      var className = this.props.className;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { className: className },
+	        _react2.default.createElement(
+	          'form',
+	          { className: 'uk-form' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'uk-form-row' },
+	            _react2.default.createElement('textarea', {
+	              className: 'uk-width-1-1',
+	              cols: '', rows: '',
+	              placeholder: 'Post tweet',
+	              onChange: this.onChangeText,
+	              value: text
+	            }),
+	            _react2.default.createElement(
+	              'button',
+	              { className: 'uk-button-primary', onClick: this.onClickPost },
+	              'POST'
+	            )
+	          )
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return PostForm;
+	}(_react2.default.Component);
+	
+	PostForm.propTypes = {
+	  className: _react2.default.PropTypes.string,
+	  onClickPost: _react2.default.PropTypes.any
+	};
+	
+	exports.default = PostForm;
 
 /***/ }
 /******/ ]);

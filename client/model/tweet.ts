@@ -46,6 +46,11 @@ export class TweetModel extends Record(initialModel) {
   retweeted() :boolean {
     return this.retweeted_status.id === 0 ? false : true;
   }
+  setPost(text) {
+    return new TweetModel({
+      text
+    })
+  }
   post() {
     return {
       status: this.text,

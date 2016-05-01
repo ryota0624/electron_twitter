@@ -9,28 +9,40 @@ class TimeLine extends React.Component<any, any> {
     this.onChangeStore = this.onChangeStore.bind(this);
     this.state = {
       account: this.props.account,
-      tweet: this.props.tweet
+      tweet: this.props.tweet,
+      user: this.props.user
     }
     this.fetchAccount = this.fetchAccount.bind(this);
+    this.getTweetById = this.getTweetById.bind(this);
   }
   componentDidMount() {
     this.props.tweet.addChangeListener(this.onChangeStore);
     this.props.account.addChangeListener(this.onChangeStore);
+    this.props.user.addChangeListener(this.onChangeStore);
   }
   onChangeStore() {
     this.setState({
       account: this.props.account,
-      tweet: this.props.tweet
+      tweet: this.props.tweet,
+      user: this.props.user
     });
   }
   fetchAccount(accountId: string) {
-    return this.state.account.getById(accountId);
+    return this.state.user.getById(accountId);
+  }
+  getTweetById(tweetId: string) {
+    return this.state.tweet.getById(tweetId);
   }
   render() {
     const accounts = this.state.account.getAllUser();
     const tweetItems = accounts
       .map(account => ({ tweets: this.state.tweet.getAccountTimeLine(account), account })).toArray()
-      .map((item, index) => <AccountTimeLine key={index} tweetItems={item.tweets} account={item.account} fetchAccount={this.fetchAccount}/>);
+      .map((item, index) => <AccountTimeLine key={index}
+        tweetItems={item.tweets}
+        account={item.account}
+        fetchAccount={this.fetchAccount}
+        getTweetById={this.getTweetById}
+        />);
     return (
       <div>
         {tweetItems}
