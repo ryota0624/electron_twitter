@@ -74,7 +74,7 @@
 	    const tweetStore = tweet_1.default({ actions: tweetOldActions });
 	    const accountDB = new localhost_1.ActionDatabase('account', new localhost_1.LocalStoregeDatabase());
 	    yield accountDB.init();
-	    let accountOldActions = yield tweetDB.load();
+	    let accountOldActions = yield accountDB.load();
 	    const accountStore = adminAccount_1.default({ actions: accountOldActions });
 	    const storeContainer = new flux_1.StoreContainer({ tweet: tweetStore, account: accountStore });
 	    tweetStore.addChangeListener(() => {
@@ -82,7 +82,8 @@
 	        tweetDB.commit();
 	    });
 	    accountStore.addChangeListener(() => {
-	        tweetDB.add(accountStore.lastAction);
+	        console.log(accountStore.lastAction);
+	        accountDB.add(accountStore.lastAction);
 	        accountDB.commit();
 	    });
 	    socket_1.socketConnect();
@@ -18305,9 +18306,9 @@
 	    }
 	    set(storeName, state) {
 	        return __awaiter(this, void 0, void 0, function* () {
-	            const currentState = JSON.parse(localStorage.getItem(storeName));
-	            const newState = [].concat(currentState, state);
-	            localStorage.setItem(storeName, JSON.stringify(newState));
+	            // const currentState = JSON.parse(localStorage.getItem(storeName));
+	            // const newState = [].concat(currentState, state);
+	            localStorage.setItem(storeName, JSON.stringify(state));
 	        });
 	    }
 	}
@@ -40188,8 +40189,8 @@
 	"use strict";
 	const React = __webpack_require__(4);
 	const flux_1 = __webpack_require__(2);
-	const tweetList_jsx_1 = __webpack_require__(310);
-	const TweetList = tweetList_jsx_1.default;
+	const account_jsx_1 = __webpack_require__(312);
+	const AccountTimeLine = account_jsx_1.default;
 	class TimeLine extends React.Component {
 	    constructor(props) {
 	        super(props);
@@ -40198,6 +40199,7 @@
 	            account: this.props.account,
 	            tweet: this.props.tweet
 	        };
+	        this.fetchAccount = this.fetchAccount.bind(this);
 	    }
 	    componentDidMount() {
 	        this.props.tweet.addChangeListener(this.onChangeStore);
@@ -40209,11 +40211,15 @@
 	            tweet: this.props.tweet
 	        });
 	    }
+	    fetchAccount(accountId) {
+	        return this.state.account.getById(accountId);
+	    }
 	    render() {
 	        const accounts = this.state.account.getAllUser();
-	        const tweetItems = accounts.map(account => this.state.tweet.getAccountTimeLine(account)).toArray();
-	        const tweetList = tweetItems.map((item, index) => React.createElement(TweetList, {key: index, tweetItems: item}));
-	        return (React.createElement("div", null, tweetList, JSON.stringify(accounts)));
+	        const tweetItems = accounts
+	            .map(account => ({ tweets: this.state.tweet.getAccountTimeLine(account), account: account })).toArray()
+	            .map((item, index) => React.createElement(AccountTimeLine, {key: index, tweetItems: item.tweets, account: item.account, fetchAccount: this.fetchAccount}));
+	        return (React.createElement("div", null, tweetItems));
 	    }
 	}
 	Object.defineProperty(exports, "__esModule", { value: true });
@@ -40260,11 +40266,12 @@
 	  _createClass(TweetList, [{
 	    key: 'itemToComponent',
 	    value: function itemToComponent(tweetItems) {
+	      var _this2 = this;
+	
 	      return tweetItems.map(function (tweet) {
-	        var text = tweet.text;
 	        var id_str = tweet.id_str;
 	
-	        return _react2.default.createElement(_tweetItem2.default, { text: text, key: id_str });
+	        return _react2.default.createElement(_tweetItem2.default, { tweet: tweet, key: id_str, fetchAccount: _this2.props.fetchAccount });
 	      });
 	    }
 	  }, {
@@ -40282,9 +40289,12 @@
 	  return TweetList;
 	}(_react2.default.Component);
 	
-	TweetList.defaultProps = { tweetItems: [] };
+	TweetList.defaultProps = {
+	  tweetItems: []
+	};
 	TweetList.propTypes = {
-	  tweetItems: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.any)
+	  tweetItems: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.any),
+	  fetchAccount: _react2.default.PropTypes.any
 	};
 	
 	exports.default = TweetList;
@@ -40330,6 +40340,11 @@
 	  }, {
 	    key: "render",
 	    value: function render() {
+	      var _props = this.props;
+	      var fetchAccount = _props.fetchAccount;
+	      var tweet = _props.tweet;
+	
+	      var account = fetchAccount(tweet.id_str);
 	      return _react2.default.createElement(
 	        "ul",
 	        null,
@@ -40339,9 +40354,9 @@
 	          _react2.default.createElement(
 	            "h3",
 	            { className: "uk-panel-title" },
-	            "..."
+	            JSON.stringify(account)
 	          ),
-	          this.props.text
+	          JSON.stringify(this.props.tweet.text)
 	        )
 	      );
 	    }
@@ -40351,9 +40366,78 @@
 	}(_react2.default.Component);
 	
 	TweetItem.propTypes = {
-	  text: _react2.default.PropTypes.string
+	  tweet: _react2.default.PropTypes.any,
+	  fetchAccount: _react2.default.PropTypes.any
 	};
 	exports.default = TweetItem;
+
+/***/ },
+/* 312 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(4);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _tweetList = __webpack_require__(310);
+	
+	var _tweetList2 = _interopRequireDefault(_tweetList);
+	
+	var _user = __webpack_require__(41);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var AccountTimeLine = function (_React$Component) {
+	  _inherits(AccountTimeLine, _React$Component);
+	
+	  function AccountTimeLine(props) {
+	    _classCallCheck(this, AccountTimeLine);
+	
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AccountTimeLine).call(this, props));
+	  }
+	
+	  _createClass(AccountTimeLine, [{
+	    key: 'render',
+	    value: function render() {
+	      var tweetItems = this.props.tweetItems;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_tweetList2.default, { tweetItems: tweetItems, fetchAccount: this.props.fetchAccount })
+	      );
+	    }
+	  }]);
+	
+	  return AccountTimeLine;
+	}(_react2.default.Component);
+	
+	AccountTimeLine.defaultProps = {
+	  tweetItems: [],
+	  account: new _user.AdminAccountModel()
+	};
+	
+	AccountTimeLine.propTypes = {
+	  tweetItems: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.any),
+	  account: _react2.default.PropTypes.any,
+	  fetchAccount: _react2.default.PropTypes.any
+	};
+	
+	exports.default = AccountTimeLine;
 
 /***/ }
 /******/ ]);

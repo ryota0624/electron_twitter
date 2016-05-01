@@ -4,9 +4,9 @@ import TweetItem from './tweetItem';
 class TweetList extends React.Component {
   itemToComponent(tweetItems) {
     return tweetItems.map(tweet => {
-      const { text, id_str } = tweet;
+      const { id_str } = tweet;
       return (
-        <TweetItem text={text} key={id_str} />
+        <TweetItem tweet={tweet} key={id_str} fetchAccount={this.props.fetchAccount} />
       );
     });
   }
@@ -20,9 +20,12 @@ class TweetList extends React.Component {
   }
 }
 
-TweetList.defaultProps = { tweetItems: [] };
+TweetList.defaultProps = {
+  tweetItems: [],
+};
 TweetList.propTypes = {
   tweetItems: React.PropTypes.arrayOf(React.PropTypes.any),
+  fetchAccount: React.PropTypes.any,
 };
 
 export default TweetList;

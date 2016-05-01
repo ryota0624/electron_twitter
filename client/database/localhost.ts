@@ -33,9 +33,9 @@ export class LocalStoregeDatabase {
     return state ? state : [];
   }
   async set(storeName, state) {
-    const currentState = JSON.parse(localStorage.getItem(storeName));
-    const newState = [].concat(currentState, state);
-    localStorage.setItem(storeName, JSON.stringify(newState));
+    // const currentState = JSON.parse(localStorage.getItem(storeName));
+    // const newState = [].concat(currentState, state);
+    localStorage.setItem(storeName, JSON.stringify(state));
   }
 }
 

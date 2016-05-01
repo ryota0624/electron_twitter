@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { connect } from '../../flux';
-import TweetListComponent from '../tweet/tweetList.jsx';
-const TweetList: any = TweetListComponent;
+import AccountTimeLineComponent from '../tweet/account.jsx';
+const AccountTimeLine: any = AccountTimeLineComponent;
 class TimeLine extends React.Component<any, any> {
   tweetStore: any;
   constructor(props) {
@@ -11,6 +11,7 @@ class TimeLine extends React.Component<any, any> {
       account: this.props.account,
       tweet: this.props.tweet
     }
+    this.fetchAccount = this.fetchAccount.bind(this);
   }
   componentDidMount() {
     this.props.tweet.addChangeListener(this.onChangeStore);
@@ -22,14 +23,17 @@ class TimeLine extends React.Component<any, any> {
       tweet: this.props.tweet
     });
   }
+  fetchAccount(accountId: string) {
+    return this.state.account.getById(accountId);
+  }
   render() {
     const accounts = this.state.account.getAllUser();
-    const tweetItems = accounts.map(account => this.state.tweet.getAccountTimeLine(account)).toArray();
-    const tweetList = tweetItems.map((item, index) => <TweetList key={index} tweetItems={item} />)
+    const tweetItems = accounts
+      .map(account => ({ tweets: this.state.tweet.getAccountTimeLine(account), account })).toArray()
+      .map((item, index) => <AccountTimeLine key={index} tweetItems={item.tweets} account={item.account} fetchAccount={this.fetchAccount}/>);
     return (
       <div>
-        {tweetList}
-        {JSON.stringify(accounts)}
+        {tweetItems}
       </div>
     );
   }

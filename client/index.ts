@@ -13,9 +13,10 @@ const appInit = async () => {
   await tweetDB.init();
   const tweetOldActions = await tweetDB.load();
   const tweetStore = tweetStoreFactory({ actions: tweetOldActions });
+  
   const accountDB = new ActionDatabase('account', new LocalStoregeDatabase());
   await accountDB.init();
-  let accountOldActions = await tweetDB.load();
+  let accountOldActions = await accountDB.load();
   const accountStore = AdminAccountStoreFactory({ actions: accountOldActions });
   const storeContainer = new StoreContainer({ tweet: tweetStore, account: accountStore });
   
@@ -25,7 +26,8 @@ const appInit = async () => {
   });
 
   accountStore.addChangeListener(() => {
-    tweetDB.add(accountStore.lastAction);
+    console.log(accountStore.lastAction);
+    accountDB.add(accountStore.lastAction);
     accountDB.commit();
   })
   
