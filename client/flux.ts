@@ -142,3 +142,44 @@ export function provider(component, storeContainer: StoreContainer) {
     }
   }
 }
+
+export class SmartComponent<T, U> extends React.Component<T, U> {
+  event: EventEmitter;
+  constructor(props, context) {
+    super(props, context);
+    this.event = new EventEmitter();
+    this.dispatch = this.dispatch.bind(this);
+    this.subscribe();
+  }
+  on(str, fn) {
+    this.event.addListener(str, fn);
+  }
+  getChildContext() {
+    const dispatch = this.dispatch;
+    return { dispatch }
+  }
+  dispatch(type, ...args) {
+    const argArray = [].concat([type], args);
+    this.event.emit.apply(this.event, argArray);
+  }
+  static get childContextTypes() {
+    return {
+      dispatch: React.PropTypes.any
+    }
+  }
+  subscribe() {//overload
+    
+  }
+}
+
+export class DumpComponent<T, U> extends React.Component<T, U> {
+  constructor(props, context) {
+    super(props, context);
+    console.log(context)
+  }
+  static get contextTypes() {
+    return {
+      dispatch: React.PropTypes.any,
+     }
+   }
+}

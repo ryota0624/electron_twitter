@@ -1,5 +1,8 @@
 {
   "name": "twitter",
   "version": false,
-  "dependencies": {}
+  "dependencies": {},
+  "ambientDependencies": {
+    "github-electron": "registry:dt/github-electron#0.37.7+20160501161709"
+  }
 }

@@ -28,6 +28,9 @@ class TwitterContainer extends Event {
     }
     this.streams.push(stream);
   }
+  getAccount(key) {
+    return this.accounts.get(key);
+  }
   postTweet(key, options) {
     const account = this.accounts.get(key);
     const twit = this.twit(account.token, account.tokenSecret);

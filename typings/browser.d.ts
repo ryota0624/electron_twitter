@@ -2,6 +2,7 @@
 /// <reference path="browser/ambient/axios/index.d.ts" />
 /// <reference path="browser/ambient/empower/index.d.ts" />
 /// <reference path="browser/ambient/flux/index.d.ts" />
+/// <reference path="browser/ambient/github-electron/index.d.ts" />
 /// <reference path="browser/ambient/history/index.d.ts" />
 /// <reference path="browser/ambient/mocha/index.d.ts" />
 /// <reference path="browser/ambient/node/index.d.ts" />

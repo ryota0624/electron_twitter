@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "test:client": "mocha --compilers ts:espower-typescript/guess test/client/**/*.ts",
-    "test:server": "mocha test/server/**/*.js"
+    "test:server": "mocha test/server/**/*.js",
+    "browser": "browser-sync start --config bs-config.js",
+    "webpack:watch": "webpack -w",
+    "start": "electron .",
+    "dev": "npm start& npm run browser& npm run webpack:watch&"
   },
   "author": "",
   "license": "ISC",
@@ -22,6 +26,7 @@
     "babel-preset-stage-2": "^6.5.0",
     "babel-preset-stage-3": "^6.5.0",
     "body-parser": "^1.15.0",
+    "browser-sync": "^2.12.5",
     "cookie-parser": "^1.4.1",
     "eslint": "^2.8.0",
     "eslint-config-airbnb": "^8.0.0",

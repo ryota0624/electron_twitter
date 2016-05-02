@@ -22,7 +22,6 @@ const appInit = async () => {
   await userDB.init();
   const userOldActions = await userDB.load();
   const userStore = UserStoreFactory({ actions:userOldActions });
-  
   const storeContainer = new StoreContainer({ tweet: tweetStore, account: accountStore, user: userStore });
   
   tweetStore.addChangeListener(() => {

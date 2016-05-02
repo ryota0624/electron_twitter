@@ -15,5 +15,5 @@ export const app = (store) => {
           // 
           // <Route path="movie/:id" component={MovieDetail}/>
           // <Route path="cast/:id" component={CastDetail}/>
-          // <Route path="search" component={MovieSearch}/>
-          // <Route path="account" component={Account}/>
+          // <Route path="searc" component={MovieSearch}/>
+          // <Route path="accoun" component={Account}/>

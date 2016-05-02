@@ -30,7 +30,7 @@ class PostForm extends React.Component {
               onChange={this.onChangeText}
               value={text}
             />
-            <button className="uk-button-primary" onClick={this.onClickPost}>POST</button>
+            <button className="uk-button" onClick={this.onClickPost}>POST</button>
           </div>
         </form>
       </div>

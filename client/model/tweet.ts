@@ -1,5 +1,6 @@
 
 import { Record } from 'immutable';
+import { MediaModel } from './media';
 
 const initialModel = {
   created_at: "",
@@ -20,7 +21,15 @@ const initialModel = {
     id: 0,
     id_str: '',
   },
-  timestamp_ms: 0
+  timestamp_ms: 0,
+  entities:
+  {
+    hashtags: [],
+    urls: [],
+    symbols: [],
+    media: {},
+  },
+  extended_entities: { media: [] },
 }
 
 export class TweetModel extends Record(initialModel) {
@@ -34,6 +43,9 @@ export class TweetModel extends Record(initialModel) {
   in_reply_to_user_id_str: string;
   in_reply_to_screen_name: string;
   timestamp_ms: string;
+  extended_entities: {
+    media: Array<any>
+  };
   user: {
     id: number;
     id_str: string;
@@ -64,10 +76,13 @@ export class TweetModel extends Record(initialModel) {
       in_reply_to_status_id: this.id_str
     });
   }
-  //in_reply_to_status_id　にstring型のtweetIdを渡すの
+  //in_reply_to_status_id　にstring型のtweetIdを
   destroy() {
     return {
       id_str: this.id_str
     }
+  }
+  getMedia() {
+    return this.extended_entities.media.map(media => new MediaModel(media))
   }
 }

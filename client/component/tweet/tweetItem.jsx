@@ -1,30 +1,33 @@
 import React from 'react';
 import { TweetModel } from '../../model/tweet';
-import { UserModel } from '../../model/user';
+import ImgPanel, { listStyle } from './imgPanel';
 
 class TweetItem extends React.Component {
   shouldUpdateComponent() {
     return true;
   }
-  renderRetweet(tweet) {
-    const retweetId = tweet.retweeted ? tweet.retweeted_status.id_str : null;
-    if (!retweetId) return null;
-    const { getTweetById, fetchAccount } = this.props;
+  retweet({ tweet, fetchUser, getTweetById, userId }) {
+    const retweetId = tweet.id_str;
     const retweet = getTweetById(retweetId);
+    const retweetUser = fetchUser(userId);
     return (
-      <ul>
-        <TweetItem
-          tweet={retweet}
-          getTweetById={getTweetById}
-          fetchAccount={fetchAccount}
-        />
-      </ul>);
+      <li>
+        RT by {retweetUser.name}
+        <ul>
+          {this.renderTweet({ tweet: retweet, fetchUser })}
+        </ul>
+      </li>
+    );
   }
-  render() {
-    const { fetchAccount, tweet } = this.props;
-    let account = fetchAccount(tweet.user.id_str);
-    account = account instanceof UserModel ? account : new UserModel();
-    const retweetComponent = this.renderRetweet.bind(this)(tweet);
+  tweet({ tweet, fetchUser }) {
+    return this.renderTweet({ tweet, fetchUser });
+  }
+  renderTweet({ tweet, fetchUser }) {
+    if (!tweet) {
+      return null;
+    }
+    const account = fetchUser(tweet.user.id_str);
+    const imgPanels = tweet.getMedia().map((media, i) => <ImgPanel key={i} media={media} />);
     return (
       <li>
         <div className="uk-panel">
@@ -33,20 +36,39 @@ class TweetItem extends React.Component {
             {account.name}
           </h3>
           <div>{this.props.tweet.text}</div>
-          {retweetComponent}
-          <div>fav</div>
+          <div>replay </div>
+          <ul style={listStyle}>
+            {imgPanels}
+          </ul>
         </div>
       </li>
     );
+  }
+  render() {
+    const { fetchUser, tweet, getTweetById } = this.props;
+    const tweetComponent = tweet.retweeted() ?
+      this.retweet({
+        userId: tweet.user.id_str,
+        fetchUser,
+        tweet: tweet.retweeted_status,
+        getTweetById,
+      })
+      : this.tweet({ fetchUser, tweet });
+    return tweetComponent;
   }
 }
 
 TweetItem.propTypes = {
   tweet: React.PropTypes.any,
-  fetchAccount: React.PropTypes.any,
+  fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,
+  goTweetDetail: React.PropTypes.any,
+  replay: React.PropTypes.any,
 };
 TweetItem.defaultProps = {
   tweet: new TweetModel(),
 };
+
+
+
 export default TweetItem;

@@ -35,14 +35,16 @@ io.sockets.on('connection', (socket) => {
 const twitter = require('./twitter');
 twitter.onStream((tweet, account) => {
   io.sockets.emit('tweet', { tweet, account });
+  db.save('tweet', tweet.id_str, tweet).catch(err => console.log(err));
 });
 // twitter.onStream((tweet) => console.log(tweet));
 
-module.exports = (cb) => {
+module.exports = (cb, options) => {
   db.init().then(() => db.load('account'))
     .then((accounts) => {
       const keys = Object.keys(accounts);
-      return keys.forEach(key => twitter.setAccount(key, accounts[key], { setStream: true }));
+      return keys.forEach(key => twitter.setAccount(key, accounts[key],
+        { setStream: options.stream }));
     })
     .then(() => server.listen(3000, () => cb())).catch(err => console.log(err));
 };

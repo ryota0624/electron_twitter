@@ -2,6 +2,7 @@
 /// <reference path="main/ambient/axios/index.d.ts" />
 /// <reference path="main/ambient/empower/index.d.ts" />
 /// <reference path="main/ambient/flux/index.d.ts" />
+/// <reference path="main/ambient/github-electron/index.d.ts" />
 /// <reference path="main/ambient/history/index.d.ts" />
 /// <reference path="main/ambient/mocha/index.d.ts" />
 /// <reference path="main/ambient/node/index.d.ts" />

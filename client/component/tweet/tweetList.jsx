@@ -10,7 +10,9 @@ class TweetList extends React.Component {
           tweet={tweet}
           key={id_str}
           getTweetById={this.props.getTweetById}
-          fetchAccount={this.props.fetchAccount}
+          fetchUser={this.props.fetchUser}
+          goTweetDetail={this.props.goTweetDetail}
+          replay={this.props.replay}
         />
       );
     });
@@ -30,8 +32,10 @@ TweetList.defaultProps = {
 };
 TweetList.propTypes = {
   tweetItems: React.PropTypes.arrayOf(React.PropTypes.any),
-  fetchAccount: React.PropTypes.any,
+  fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,
+  goTweetDetail: React.PropTypes.any,
+  replay: React.PropTypes.any,
 };
 
 export default TweetList;

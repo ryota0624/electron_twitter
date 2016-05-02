@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="/css/uikit.min.css">
+  </head>
+  <body>
+    <div class="uk-block">
+      <div class="uk-container">
+        <div class="uk-block-muted">
+          <img src={{tweet.user.profile_image_url}}/>
+          <strong>{{tweet.user.name}}</strong>
+          <span>{{tweet.user.screen_name}}</span>
+          <div class="uk-block uk-block-default" id="tweetText">{{tweet.text}}</div>
+        </div>
+        <textarea class="uk-width-1-1" rows="5"></textarea>
+        <div class="uk-block">
+          <img height="30px" src={{account.profile_image_url}}>
+          <button class="uk-button" type="button" id="postBtn">POST</button>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

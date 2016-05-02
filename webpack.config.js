@@ -1,5 +1,10 @@
 const path = require('path');
-// const webpack = require('webpack');
+const webpack = require('webpack');
+var JsonpTemplatePlugin = webpack.JsonpTemplatePlugin;
+var FunctionModulePlugin = require('webpack/lib/FunctionModulePlugin');
+var NodeTargetPlugin = require('webpack/lib/node/NodeTargetPlugin');
+var ExternalsPlugin = webpack.ExternalsPlugin;
+
 module.exports = {
   entry: [path.resolve(__dirname, 'client', 'index.ts')],
   output: {
@@ -24,4 +29,28 @@ module.exports = {
     // requireやimport時の拡張子を省略
     extensions: ['.tsx', '.ts', '.js', '.jsx', ''],
   },
+  plugins: [
+    new webpack.NoErrorsPlugin(),
+    new ExternalsPlugin('commonjs', [
+      'app',
+      'auto-updater',
+      'browser-window',
+      'content-tracing',
+      'dialog',
+      'global-shortcut',
+      'electron',
+      'menu',
+      'menu-item',
+      'power-monitor',
+      'protocol',
+      'tray',
+      'remote',
+      'web-frame',
+      'clipboard',
+      'crash-reporter',
+      'screen',
+      'shell',
+    ]),
+    new NodeTargetPlugin(),
+  ],
 };
