@@ -42,6 +42,7 @@ class AccountTimeLine extends DumpComponent {
             tweetItems={tweetItems}
             fetchUser={this.props.fetchUser}
             getTweetById={this.props.getTweetById}
+            account={account}
           />
         </div>
       </div>

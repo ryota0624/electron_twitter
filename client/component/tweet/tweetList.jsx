@@ -1,7 +1,8 @@
 import React from 'react';
 import TweetItem from './tweetItem';
+import { DumpComponent } from '../dumpComponent';
 
-class TweetList extends React.Component {
+class TweetList extends DumpComponent {
   itemToComponent(tweetItems) {
     return tweetItems.map(tweet => {
       const { id_str } = tweet;
@@ -13,6 +14,7 @@ class TweetList extends React.Component {
           fetchUser={this.props.fetchUser}
           goTweetDetail={this.props.goTweetDetail}
           replay={this.props.replay}
+          account={this.props.account}
         />
       );
     });
@@ -36,6 +38,7 @@ TweetList.propTypes = {
   getTweetById: React.PropTypes.any,
   goTweetDetail: React.PropTypes.any,
   replay: React.PropTypes.any,
+  account: React.PropTypes.any,
 };
 
 export default TweetList;

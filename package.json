@@ -10,7 +10,8 @@
     "browser": "browser-sync start --config bs-config.js",
     "webpack:watch": "webpack -w",
     "start": "electron .",
-    "dev": "npm start& npm run browser& npm run webpack:watch&"
+    "dev": "npm start& npm run browser& npm run webpack:watch&",
+    "webpack:sub": "webpack -w --config webpack.subWindow.config.js"
   },
   "author": "",
   "license": "ISC",

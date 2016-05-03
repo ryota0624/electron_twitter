@@ -1,10 +1,24 @@
 import React from 'react';
 import { TweetModel } from '../../model/tweet';
 import ImgPanel, { listStyle } from './imgPanel';
+import { DumpComponent } from '../dumpComponent';
 
-class TweetItem extends React.Component {
+class TweetItem extends DumpComponent {
+  constructor(props, context) {
+    super(props, context);
+    this.replay = this.replay.bind(this);
+  }
   shouldUpdateComponent() {
     return true;
+  }
+  goTweetDetail() {
+    this.dispatch('goTweetDetail', { tweetId: this.props.tweet.id_str });
+  }
+  replay(tweet) {
+    return () => {
+      const { account } = this.props;
+      this.dispatch('openReplayWindow', { accountId: account.id_str, tweet });
+    };
   }
   retweet({ tweet, fetchUser, getTweetById, userId }) {
     const retweetId = tweet.id_str;
@@ -26,6 +40,7 @@ class TweetItem extends React.Component {
     if (!tweet) {
       return null;
     }
+    const openReplayWindow = this.replay(tweet);
     const account = fetchUser(tweet.user.id_str);
     const imgPanels = tweet.getMedia().map((media, i) => <ImgPanel key={i} media={media} />);
     return (
@@ -36,7 +51,7 @@ class TweetItem extends React.Component {
             {account.name}
           </h3>
           <div>{this.props.tweet.text}</div>
-          <div>replay </div>
+          <div onClick={openReplayWindow}>replay </div>
           <ul style={listStyle}>
             {imgPanels}
           </ul>
@@ -64,6 +79,7 @@ TweetItem.propTypes = {
   getTweetById: React.PropTypes.any,
   goTweetDetail: React.PropTypes.any,
   replay: React.PropTypes.any,
+  account: React.PropTypes.any,
 };
 TweetItem.defaultProps = {
   tweet: new TweetModel(),

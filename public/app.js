@@ -258,18 +258,6 @@
 	    }
 	}
 	exports.SmartComponent = SmartComponent;
-	class DumpComponent extends React.Component {
-	    constructor(props, context) {
-	        super(props, context);
-	        console.log(context);
-	    }
-	    static get contextTypes() {
-	        return {
-	            dispatch: React.PropTypes.any,
-	        };
-	    }
-	}
-	exports.DumpComponent = DumpComponent;
 
 
 /***/ },
@@ -40136,13 +40124,13 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _dumpComponent = __webpack_require__(322);
+	var _dumpComponent = __webpack_require__(317);
 	
-	var _tweetList = __webpack_require__(317);
+	var _tweetList = __webpack_require__(318);
 	
 	var _tweetList2 = _interopRequireDefault(_tweetList);
 	
-	var _postForm = __webpack_require__(320);
+	var _postForm = __webpack_require__(321);
 	
 	var _postForm2 = _interopRequireDefault(_postForm);
 	
@@ -40225,7 +40213,8 @@
 	          _react2.default.createElement(_tweetList2.default, {
 	            tweetItems: tweetItems,
 	            fetchUser: this.props.fetchUser,
-	            getTweetById: this.props.getTweetById
+	            getTweetById: this.props.getTweetById,
+	            account: account
 	          })
 	        )
 	      );
@@ -40258,6 +40247,62 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.DumpComponent = undefined;
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(4);
+	
+	var React = _interopRequireWildcard(_react);
+	
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var DumpComponent = exports.DumpComponent = function (_React$Component) {
+	  _inherits(DumpComponent, _React$Component);
+	
+	  _createClass(DumpComponent, null, [{
+	    key: 'contextTypes',
+	    get: function get() {
+	      return {
+	        dispatch: React.PropTypes.any
+	      };
+	    }
+	  }]);
+	
+	  function DumpComponent(props, context) {
+	    _classCallCheck(this, DumpComponent);
+	
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DumpComponent).call(this, props, context));
+	
+	    _this.dispatch = _this.context.dispatch;
+	    return _this;
+	  }
+	
+	  _createClass(DumpComponent, [{
+	    key: 'render',
+	    value: function render() {
+	      return null;
+	    }
+	  }]);
+	
+	  return DumpComponent;
+	}(React.Component);
+
+/***/ },
+/* 318 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -40265,9 +40310,11 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
-	var _tweetItem = __webpack_require__(318);
+	var _tweetItem = __webpack_require__(319);
 	
 	var _tweetItem2 = _interopRequireDefault(_tweetItem);
+	
+	var _dumpComponent = __webpack_require__(317);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40277,8 +40324,8 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var TweetList = function (_React$Component) {
-	  _inherits(TweetList, _React$Component);
+	var TweetList = function (_DumpComponent) {
+	  _inherits(TweetList, _DumpComponent);
 	
 	  function TweetList() {
 	    _classCallCheck(this, TweetList);
@@ -40300,7 +40347,8 @@
 	          getTweetById: _this2.props.getTweetById,
 	          fetchUser: _this2.props.fetchUser,
 	          goTweetDetail: _this2.props.goTweetDetail,
-	          replay: _this2.props.replay
+	          replay: _this2.props.replay,
+	          account: _this2.props.account
 	        });
 	      });
 	    }
@@ -40317,7 +40365,7 @@
 	  }]);
 	
 	  return TweetList;
-	}(_react2.default.Component);
+	}(_dumpComponent.DumpComponent);
 	
 	TweetList.defaultProps = {
 	  tweetItems: []
@@ -40327,13 +40375,14 @@
 	  fetchUser: _react2.default.PropTypes.any,
 	  getTweetById: _react2.default.PropTypes.any,
 	  goTweetDetail: _react2.default.PropTypes.any,
-	  replay: _react2.default.PropTypes.any
+	  replay: _react2.default.PropTypes.any,
+	  account: _react2.default.PropTypes.any
 	};
 	
 	exports.default = TweetList;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40350,9 +40399,11 @@
 	
 	var _tweet2 = __webpack_require__(44);
 	
-	var _imgPanel = __webpack_require__(319);
+	var _imgPanel = __webpack_require__(320);
 	
 	var _imgPanel2 = _interopRequireDefault(_imgPanel);
+	
+	var _dumpComponent = __webpack_require__(317);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -40362,19 +40413,38 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var TweetItem = function (_React$Component) {
-	  _inherits(TweetItem, _React$Component);
+	var TweetItem = function (_DumpComponent) {
+	  _inherits(TweetItem, _DumpComponent);
 	
-	  function TweetItem() {
+	  function TweetItem(props, context) {
 	    _classCallCheck(this, TweetItem);
 	
-	    return _possibleConstructorReturn(this, Object.getPrototypeOf(TweetItem).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TweetItem).call(this, props, context));
+	
+	    _this.replay = _this.replay.bind(_this);
+	    return _this;
 	  }
 	
 	  _createClass(TweetItem, [{
 	    key: 'shouldUpdateComponent',
 	    value: function shouldUpdateComponent() {
 	      return true;
+	    }
+	  }, {
+	    key: 'goTweetDetail',
+	    value: function goTweetDetail() {
+	      this.dispatch('goTweetDetail', { tweetId: this.props.tweet.id_str });
+	    }
+	  }, {
+	    key: 'replay',
+	    value: function replay(tweet) {
+	      var _this2 = this;
+	
+	      return function () {
+	        var account = _this2.props.account;
+	
+	        _this2.dispatch('openReplayWindow', { accountId: account.id_str, tweet: tweet });
+	      };
 	    }
 	  }, {
 	    key: 'retweet',
@@ -40416,6 +40486,7 @@
 	      if (!tweet) {
 	        return null;
 	      }
+	      var openReplayWindow = this.replay(tweet);
 	      var account = fetchUser(tweet.user.id_str);
 	      var imgPanels = tweet.getMedia().map(function (media, i) {
 	        return _react2.default.createElement(_imgPanel2.default, { key: i, media: media });
@@ -40439,7 +40510,7 @@
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            null,
+	            { onClick: openReplayWindow },
 	            'replay '
 	          ),
 	          _react2.default.createElement(
@@ -40469,14 +40540,15 @@
 	  }]);
 	
 	  return TweetItem;
-	}(_react2.default.Component);
+	}(_dumpComponent.DumpComponent);
 	
 	TweetItem.propTypes = {
 	  tweet: _react2.default.PropTypes.any,
 	  fetchUser: _react2.default.PropTypes.any,
 	  getTweetById: _react2.default.PropTypes.any,
 	  goTweetDetail: _react2.default.PropTypes.any,
-	  replay: _react2.default.PropTypes.any
+	  replay: _react2.default.PropTypes.any,
+	  account: _react2.default.PropTypes.any
 	};
 	TweetItem.defaultProps = {
 	  tweet: new _tweet2.TweetModel()
@@ -40485,7 +40557,7 @@
 	exports.default = TweetItem;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40563,7 +40635,7 @@
 	exports.default = ImgPanel;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40655,56 +40727,6 @@
 	};
 	
 	exports.default = PostForm;
-
-/***/ },
-/* 321 */,
-/* 322 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.DumpComponent = undefined;
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _react = __webpack_require__(4);
-	
-	var React = _interopRequireWildcard(_react);
-	
-	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var DumpComponent = exports.DumpComponent = function (_React$Component) {
-	  _inherits(DumpComponent, _React$Component);
-	
-	  _createClass(DumpComponent, null, [{
-	    key: 'contextTypes',
-	    get: function get() {
-	      return {
-	        dispatch: React.PropTypes.any
-	      };
-	    }
-	  }]);
-	
-	  function DumpComponent(props, context) {
-	    _classCallCheck(this, DumpComponent);
-	
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DumpComponent).call(this, props, context));
-	
-	    _this.dispatch = _this.context.dispatch;
-	    return _this;
-	  }
-	
-	  return DumpComponent;
-	}(React.Component);
 
 /***/ }
 /******/ ]);

@@ -10,4 +10,7 @@ export class DumpComponent extends React.Component {
     super(props, context);
     this.dispatch = this.context.dispatch;
   }
+  render() {
+    return null;
+  }
 }

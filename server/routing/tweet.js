@@ -2,9 +2,8 @@ const twitter = require('../twitter');
 const db = require('../db/store');
 const Handlebars = require('handlebars');
 const fs = require('fs');
-function createTemplate(template, { account, tweet }) {
-  return template({ account, tweet });
-}
+const template = Handlebars.
+  compile(fs.readFileSync(`${__dirname}/view/tweetPost.html`).toString());
 
 module.exports = (app, server, passport) => {
   app.post('/tweet/update', (req, res) => {
@@ -25,9 +24,9 @@ module.exports = (app, server, passport) => {
       account = twitter.getAccount(params.accountId)._json;
       db.load('tweet').then(tweets => {
         tweet = tweets[params.tweetId];
-        console.log(tweet)
-        const template = Handlebars.compile(fs.readFileSync(`${__dirname}/view/tweetPost.html`).toString());
-        res.send(createTemplate(template, { account, tweet }));
+        const accountData = JSON.stringify(account);
+        const tweetData = JSON.stringify(tweet);
+        res.send(template({ account, tweet, accountData, tweetData }));
       });
     } catch (err) {
       console.log(err);

@@ -171,15 +171,3 @@ export class SmartComponent<T, U> extends React.Component<T, U> {
     
   }
 }
-
-export class DumpComponent<T, U> extends React.Component<T, U> {
-  constructor(props, context) {
-    super(props, context);
-    console.log(context)
-  }
-  static get contextTypes() {
-    return {
-      dispatch: React.PropTypes.any,
-     }
-   }
-}

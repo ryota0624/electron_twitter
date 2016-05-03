@@ -3,6 +3,8 @@
     <link rel="stylesheet" href="/css/uikit.min.css">
   </head>
   <body>
+    <script id="tweet-data" type="text/plain" data-json="{{tweetData}}"></script>
+    <script id="account-data" type="text/plain" data-json="{{accountData}}"></script>
     <div class="uk-block">
       <div class="uk-container">
         <div class="uk-block-muted">
@@ -11,12 +13,15 @@
           <span>{{tweet.user.screen_name}}</span>
           <div class="uk-block uk-block-default" id="tweetText">{{tweet.text}}</div>
         </div>
-        <textarea class="uk-width-1-1" rows="5"></textarea>
-        <div class="uk-block">
-          <img height="30px" src={{account.profile_image_url}}>
-          <button class="uk-button" type="button" id="postBtn">POST</button>
-        </div>
+        <form name="tweet">
+          <textarea class="uk-width-1-1" id="postText" name="post" rows="5"></textarea>
+          <div class="uk-block">
+           <img height="30px" src={{account.profile_image_url}}>
+           <button class="uk-button" type="button" id="postBtn">POST</button>
+          </div>
+        </form>
       </div>
     </div>
+    <script src="/subWindow.js"></script>
   </body>
 </html>

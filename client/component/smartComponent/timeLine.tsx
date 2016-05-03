@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { connect, SmartComponent, DumpComponent } from '../../flux';
+import { connect, SmartComponent } from '../../flux';
 import { postTweet } from '../../action/tweet';
 import { openWindow } from '../../service/ipc';
 
