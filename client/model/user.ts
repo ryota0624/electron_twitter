@@ -33,7 +33,9 @@ export class AdminAccountModel extends Record(AdminDefaultProperty) {
   screen_name: string;
   updateTimeLine(params): AdminAccountModel {
     const concatTimeLine = (bool) => {
-      return bool ? [].concat(this.timeLine, params.timeLine) : params.timeLine;
+      return bool ? [].concat(this.timeLine, params.timeLine)
+        .filter((x, i, self) => self.indexOf(x) === i)
+        : params.timeLine;
     }
     const updatedTimeLine = concatTimeLine(this.timeLine);
     let newModel = Object.assign({}, this.toJS() , { timeLine: updatedTimeLine });

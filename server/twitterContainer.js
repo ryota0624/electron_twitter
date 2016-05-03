@@ -1,9 +1,15 @@
 'use strict';
 const Twit = require('twit');
 const Event = require('events');
+
+function TwitterCallback(type, cb) {
+  this.type = type;
+  this.fn = cb;
+}
 class TwitterContainer extends Event {
   constructor(keys) {
     super();
+    this.eventType = ['connected', 'disconnect', 'connect', 'reconnect', 'favorite', 'tweet'];
     this.streamCbs = [];
     this.streams = [];
     this.keys = keys;
@@ -16,15 +22,13 @@ class TwitterContainer extends Event {
     this.accounts = new Map();
   }
   setAccount(key, account, optionsArg) {
-    let options = { setStream: true, type: 'tweet' };
-    if (optionsArg) {
-      options = optionsArg;
-    }
     this.accounts.set(key, account);
     const twit = this.twit(account.token, account.tokenSecret);
     const stream = Object.assign(twit.stream('user'), { account });
-    if (options.setStream) {
-      this.streamCbs.forEach(cb => this.appendCallback(stream, options.type, cb));
+    if (optionsArg.setStream) {
+      this.streamCbs.forEach(cb => {
+        this.appendCallback(stream, cb.type, cb.fn);
+      });
     }
     this.streams.push(stream);
   }
@@ -80,19 +84,29 @@ class TwitterContainer extends Event {
       });
     });
   }
-  onStream(cb, optionsArg) {
-    let options = { setStream: true, type: 'tweet' };
-    if (optionsArg) {
-      options = Object.assign({}, options, optionsArg);
-    }
-    this.streamCbs.push(cb);
-    if (options.setStream) {
-      this.streams.forEach(stream => this.appendCallback(stream, options.type, cb));
+  onStream(cb, type, optionsArg = { setStream: true }) {
+    const callbackFn = new TwitterCallback(type, cb);
+    this.streamCbs.push(callbackFn);
+    if (optionsArg.setStream) {
+      this.streams.forEach(stream => {
+        this.appendCallback(stream, type, cb);
+      });
     }
   }
   appendCallback(stream, type, cb) {
-    stream.on(type, (tweet) => cb(tweet, stream.account));
+    try {
+      stream.on(type, (tweet) => cb(tweet, stream.account));
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  start() {
+    this.streams.forEach(stream => stream.start());
+  }
+  stop() {
+    this.streams.forEach(stream => stream.stop());
   }
 }
+
 
 module.exports = TwitterContainer;

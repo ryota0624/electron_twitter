@@ -36,7 +36,15 @@ const twitter = require('./twitter');
 twitter.onStream((tweet, account) => {
   io.sockets.emit('tweet', { tweet, account });
   db.save('tweet', tweet.id_str, tweet).catch(err => console.log(err));
-});
+}, 'tweet', { setStream: true });
+
+twitter.onStream((tweet) => {
+  console.log(tweet)
+  db.save('delete', tweet.delete.status.id_str, tweet.delete.status).catch(err => console.log(err));
+  db.load('tweet').then(tweets => {
+    console.log(tweets[tweet.delete.status.id_str]);
+  });
+}, 'delete', { setStream: true });
 
 exports.streamOn = twitter.onStream.bind(twitter);
 
@@ -45,7 +53,7 @@ const serverInit = (cb, options) => {
     .then((accounts) => {
       const keys = Object.keys(accounts);
       return keys.forEach(key => twitter.setAccount(key, accounts[key],
-        { setStream: options.stream, type: 'tweet' }));
+        { setStream: options.stream }));
     })
     .then(() => server.listen(3000, () => cb())).catch(err => console.log(err));
 };

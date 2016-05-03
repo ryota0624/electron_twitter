@@ -9,9 +9,9 @@ import { TweetModel } from '../../model/tweet';
 const accountComponent = (params, click) => {
   const { name, screen_name, profile_image_url } = params;
   return (
-    <div className={"uk-block uk-block-muted"}>
+    <div className={"uk-block-muted"}>
       <div className="uk-container">
-        <img src={profile_image_url} alt={'hoge'} />
+        <img className="uk-border-rounded" src={profile_image_url} alt={'hoge'} />
         <strong>{name}</strong>
         <span>{screen_name}</span>
         <PostForm onClickPost={click} />
@@ -35,7 +35,7 @@ class AccountTimeLine extends DumpComponent {
   render() {
     const { tweetItems, account, className } = this.props;
     return (
-      <div className={`uk-block ${className}`}>
+      <div className={`${className}`}>
         <div className="uk-container">
           {accountComponent(account, this.tweetPost)}
           <TweetList

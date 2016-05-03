@@ -92,9 +92,9 @@ class TimeLine extends SmartComponent<any, any> {
         className={classNameFactory(index)}
         />);
     return (
-      <div className="uk-grid">
-        {tweetItems}
-      </div>
+          <div className="uk-grid">
+            {tweetItems}
+          </div>
     );
   }
 }

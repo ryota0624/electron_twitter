@@ -1,45 +1,40 @@
-import { StoreContainer } from './flux';
-import AdminAccountStoreFactory from './store/adminAccount';
-import tweetStoreFactory from './store/tweet';
-import UserStoreFactory from './store/user';
-import { socketConnect } from './service/socket';
-import { ActionDatabase, LocalStoregeDatabase } from './database/localhost';
+import { storeInit } from './storeContainer';
 import { render } from 'react-dom';
 import { app } from './component/router';
+import { socketConnect } from './service/socket';
+// import storeInit from './mainStore';
+import { ActionDatabase, LocalStoregeDatabase } from './database/localhost';
 
 const appInit = async () => {
   const tweetDB = new ActionDatabase('tweet', new LocalStoregeDatabase());
   await tweetDB.init();
-  const tweetOldActions = await tweetDB.load();
-  const tweetStore = tweetStoreFactory({ actions: tweetOldActions });
+  const tweetActions = await tweetDB.load();
   
   const accountDB = new ActionDatabase('account', new LocalStoregeDatabase());
   await accountDB.init();
-  const accountOldActions = await accountDB.load();
-  const accountStore = AdminAccountStoreFactory({ actions: accountOldActions });
+  const accountActions = await accountDB.load();
 
   const userDB = new ActionDatabase('user', new LocalStoregeDatabase());
   await userDB.init();
-  const userOldActions = await userDB.load();
-  const userStore = UserStoreFactory({ actions:userOldActions });
-  const storeContainer = new StoreContainer({ tweet: tweetStore, account: accountStore, user: userStore });
+  const userActions = await userDB.load();
   
-  tweetStore.addChangeListener(() => {
-    tweetDB.add(tweetStore.lastAction);
+  const storeContainer = await storeInit({ tweetActions, accountActions, userActions });
+
+  const { tweet, account, user} = storeContainer.stores;
+  tweet.addChangeListener(() => {
+    tweetDB.add(tweet.lastAction);
     tweetDB.commit();
   });
 
-  accountStore.addChangeListener(() => {
-    accountDB.add(accountStore.lastAction);
+  account.addChangeListener(() => {
+    accountDB.add(account.lastAction);
     accountDB.commit();
   });
 
-  userStore.addChangeListener(() => {
-    console.log(userStore.lastAction);
-    userDB.add(userStore.lastAction);
+  user.addChangeListener(() => {
+    userDB.add(user.lastAction);
     userDB.commit();
   });
-  
   socketConnect();
   render(app(storeContainer), document.getElementById('app'));
 }

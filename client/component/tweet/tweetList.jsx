@@ -8,7 +8,7 @@ const listStyle = {
   whiteSpace: 'nowrap',
   overflowX: 'scroll',
   overflowY: 'scroll',
-  height: '400px',
+  height: '500px',
 };
 
 class TweetList extends DumpComponent {

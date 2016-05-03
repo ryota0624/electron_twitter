@@ -17,6 +17,7 @@ class ImgPanel extends React.Component {
     return (
       <div style={imgStype} className="uk-panel uk-panel-box">
         <img
+          className="uk-border-rounded"
           onClick={onClick}
           width={150} height={150}
           src={imgUrl} alt={imgUrl}

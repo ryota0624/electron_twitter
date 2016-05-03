@@ -11,7 +11,8 @@
     "webpack:watch": "webpack -w",
     "start": "electron .",
     "dev": "npm start& npm run browser& npm run webpack:watch&",
-    "webpack:sub": "webpack -w --config webpack.subWindow.config.js"
+    "webpack:sub": "webpack -w --config webpack.subWindow.config.js",
+    "webpack:store": "webpack -w --config webpack.config.main.store.js"
   },
   "author": "",
   "license": "ISC",

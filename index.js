@@ -21,8 +21,16 @@ const appStart = () => {
 };
 server(appStart, { stream: true });
 streamOn((message) => {
-  console.log(message);
-}, { type: 'favorite' });
+  console.log('connected');
+}, 'connected', { setStream: true });
+
+streamOn(m => console.log('connect'), 'connect');
+streamOn(m => console.log('disconnect'), 'disconnect');
+streamOn(m => console.log('reconnect'), 'reconnect');
+streamOn(m => console.log('error'), 'error');
+streamOn(m => console.log('message', m), 'message');
+
+
 
 ipc.on('open-url', (sys, data) => {
   const url = data.url;

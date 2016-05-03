@@ -23,7 +23,7 @@ passport.use(new TwitterStrategy({
   (token, tokenSecret, profile, done) => {
     passport.session.id = profile.id;
     const tokenProfile = Object.assign({}, profile, { token, tokenSecret });
-    twitter.setAccount(profile.id, tokenProfile);
+    twitter.setAccount(profile.id, tokenProfile, { setStream: true });
     db.save('account', profile.id, tokenProfile).then(() => done(null, tokenProfile))
       .catch(err => console.log(err));
   }
