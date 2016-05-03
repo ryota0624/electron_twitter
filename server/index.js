@@ -37,16 +37,18 @@ twitter.onStream((tweet, account) => {
   io.sockets.emit('tweet', { tweet, account });
   db.save('tweet', tweet.id_str, tweet).catch(err => console.log(err));
 });
-// twitter.onStream((tweet) => console.log(tweet));
 
-module.exports = (cb, options) => {
+exports.streamOn = twitter.onStream.bind(twitter);
+
+const serverInit = (cb, options) => {
   db.init().then(() => db.load('account'))
     .then((accounts) => {
       const keys = Object.keys(accounts);
       return keys.forEach(key => twitter.setAccount(key, accounts[key],
-        { setStream: options.stream }));
+        { setStream: options.stream, type: 'tweet' }));
     })
     .then(() => server.listen(3000, () => cb())).catch(err => console.log(err));
 };
 
+exports.serverInit = serverInit;
 

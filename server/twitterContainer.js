@@ -16,7 +16,7 @@ class TwitterContainer extends Event {
     this.accounts = new Map();
   }
   setAccount(key, account, optionsArg) {
-    let options = { setStream: true };
+    let options = { setStream: true, type: 'tweet' };
     if (optionsArg) {
       options = optionsArg;
     }
@@ -24,7 +24,7 @@ class TwitterContainer extends Event {
     const twit = this.twit(account.token, account.tokenSecret);
     const stream = Object.assign(twit.stream('user'), { account });
     if (options.setStream) {
-      this.streamCbs.forEach(cb => this.appendCallback(stream, cb));
+      this.streamCbs.forEach(cb => this.appendCallback(stream, options.type, cb));
     }
     this.streams.push(stream);
   }
@@ -81,17 +81,17 @@ class TwitterContainer extends Event {
     });
   }
   onStream(cb, optionsArg) {
-    let options = { setStream: true };
+    let options = { setStream: true, type: 'tweet' };
     if (optionsArg) {
-      options = optionsArg;
+      options = Object.assign({}, options, optionsArg);
     }
     this.streamCbs.push(cb);
     if (options.setStream) {
-      this.streams.forEach(stream => this.appendCallback(stream, cb));
+      this.streams.forEach(stream => this.appendCallback(stream, options.type, cb));
     }
   }
-  appendCallback(stream, cb) {
-    stream.on('tweet', (tweet) => cb(tweet, stream.account));
+  appendCallback(stream, type, cb) {
+    stream.on(type, (tweet) => cb(tweet, stream.account));
   }
 }
 

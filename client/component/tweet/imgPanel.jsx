@@ -6,12 +6,6 @@ const imgStype = {
   padding: '5px 10px',
   // textAlign: 'center',
 };
-export const listStyle = {
-  width: '100%',
-  margin: '0 auto',
-  whiteSpace: 'nowrap',
-  overflowX: 'scroll',
-};
 
 class ImgPanel extends React.Component {
   onClickImg() {

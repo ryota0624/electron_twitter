@@ -2,11 +2,41 @@ import React from 'react';
 import { TweetModel } from '../../model/tweet';
 import ImgPanel, { listStyle } from './imgPanel';
 import { DumpComponent } from '../dumpComponent';
+import { tweetTextParse } from '../../utils/tweet';
+
+function imgPanelListFactory(tweet, clickFactory) {
+  return tweet.getMedia().map((media, i) => {
+    const onClick = clickFactory({ url: media.getUrl() });
+    return (<ImgPanel key={i} media={media} onClick={onClick} />);
+  });
+}
+function tweetTextToComponent(tweet, clickFactory) {
+  return tweet.map((line, indexArr) => {
+    const onClick = clickFactory({ url: line.linkUrl, windowSize: { width: 600, height: 400 } });
+    if (line.link) {
+      const noLinkText = line.text.slice(0, line.index);
+      const noLinkTextComponent = noLinkText.split(/(.{20})/)
+            .map((noLinkLine, i) => <p key={i}>{noLinkLine}</p>);
+      return line.appendText ?
+        <span key={indexArr}>
+          {noLinkTextComponent}
+          <p><a onClick={onClick}>
+            {line.linkUrl}
+          </a></p>
+        </span>
+        : <span key={indexArr}>
+          <p><a onClick={onClick}>
+            {line.linkUrl}
+          </a></p></span>;
+    }
+    return <p key={indexArr}>{line.text}</p>;
+  });
+}
 
 class TweetItem extends DumpComponent {
   constructor(props, context) {
     super(props, context);
-    this.replay = this.replay.bind(this);
+    this.reply = this.reply.bind(this);
   }
   shouldUpdateComponent() {
     return true;
@@ -14,10 +44,10 @@ class TweetItem extends DumpComponent {
   goTweetDetail() {
     this.dispatch('goTweetDetail', { tweetId: this.props.tweet.id_str });
   }
-  replay(tweet) {
+  reply(tweet) {
     return () => {
       const { account } = this.props;
-      this.dispatch('openReplayWindow', { accountId: account.id_str, tweet });
+      this.dispatch('openReplyWindow', { accountId: account.id_str, tweet });
     };
   }
   retweet({ tweet, fetchUser, getTweetById, userId }) {
@@ -36,15 +66,24 @@ class TweetItem extends DumpComponent {
   tweet({ tweet, fetchUser }) {
     return this.renderTweet({ tweet, fetchUser });
   }
+  postFav(tweet) {
+    return () => {
+      const { account } = this.props;
+      this.dispatch('postFav', { accountId: account.id_str, tweet });
+    };
+  }
   renderTweet({ tweet, fetchUser }) {
     if (!tweet) {
       return null;
     }
-    const openReplayWindow = this.replay(tweet);
+    const mediaClick = ({ url, windowSize }) => () => this.dispatch('openUrl', { url, windowSize });
+    const { text } = this.props.tweet;
+    const openReplyWindow = this.reply(tweet);
+    const postFav = this.postFav(tweet);
     const account = fetchUser(tweet.user.id_str);
-    const mediaClick = (url) => () => this.dispatch('openUrl', url);
-    const imgPanels = tweet.getMedia()
-      .map((media, i) => <ImgPanel key={i} media={media} onClick={mediaClick(media.getUrl())} />);
+    const imgPanels = imgPanelListFactory(tweet, mediaClick);
+    const tweetText = tweetTextToComponent(tweetTextParse(text), mediaClick);
+    const favIcon = tweet.favorited ? 'star-o' : 'star';
     return (
       <li>
         <div className="uk-panel">
@@ -52,8 +91,9 @@ class TweetItem extends DumpComponent {
             <img src={account.profile_image_url} alt={'hoge'} />
             {account.name}
           </h3>
-          <div>{this.props.tweet.text}</div>
-          <div onClick={openReplayWindow}>replay </div>
+          <div>{tweetText}</div>
+          <a className="uk-icon-reply uk-icon-medium" onClick={openReplyWindow}></a>
+          {"  "}<a className={`uk-icon-${favIcon} uk-icon-medium`} onClick={postFav}></a>
           <ul style={listStyle}>
             {imgPanels}
           </ul>
@@ -80,13 +120,11 @@ TweetItem.propTypes = {
   fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,
   goTweetDetail: React.PropTypes.any,
-  replay: React.PropTypes.any,
+  reply: React.PropTypes.any,
   account: React.PropTypes.any,
 };
 TweetItem.defaultProps = {
   tweet: new TweetModel(),
 };
-
-
 
 export default TweetItem;

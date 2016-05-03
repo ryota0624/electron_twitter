@@ -12,6 +12,7 @@ const initialModel = {
   in_reply_to_user_id: null,
   in_reply_to_user_id_str: null,
   in_reply_to_screen_name: null,
+  favorited: false,
   user: {
     id: 0,
     id_str: '',
@@ -43,6 +44,7 @@ export class TweetModel extends Record(initialModel) {
   in_reply_to_user_id_str: string;
   in_reply_to_screen_name: string;
   timestamp_ms: string;
+  favorited: boolean;
   extended_entities: {
     media: Array<any>
   };
@@ -84,5 +86,9 @@ export class TweetModel extends Record(initialModel) {
   }
   getMedia() {
     return this.extended_entities.media.map(media => new MediaModel(media))
+  }
+  postFav() {
+    const params = Object.assign(this.toJS(), { favorited: true });
+    return new TweetModel(params);
   }
 }

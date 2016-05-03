@@ -13,6 +13,7 @@ export function handler(action: any, state: accountCollectionn): accountCollecti
     case UPDATE: {
       const id = String(action.id)
       const updateAccount = state.get(id);
+      if (!updateAccount) return state;
       const nextState = state.set(id, updateAccount.updateTimeLine(action.params));
       return nextState;
     }
@@ -43,6 +44,7 @@ export const initAccountDate = () => {
 const initState = Map<string, AdminAccountModel>(initAccountDate());
 const AdminAccountStoreFactory = ({state = initState, actions = []}) => {
   const newState = state ? state : initState;
-  return new AdminAccountStore(newState, handler, actions);
+  const filteredAction = actions.filter((x, i, self) => self.indexOf(x) === i);
+  return new AdminAccountStore(newState, handler, filteredAction);
 }
 export default AdminAccountStoreFactory;

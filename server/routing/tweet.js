@@ -33,4 +33,9 @@ module.exports = (app, server, passport) => {
       res.send({});
     }
   });
+  app.post('/fav/create', (req, res) => {
+    const key = req.body.key;
+    const tweetId = req.body.options.id;
+    twitter.createFav(key, tweetId).then(data => res.send(data));
+  });
 };

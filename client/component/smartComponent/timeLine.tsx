@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { connect, SmartComponent } from '../../flux';
-import { postTweet } from '../../action/tweet';
+import { postTweet, createFav } from '../../action/tweet';
 import { openWindow } from '../../service/ipc';
 
 import AccountTimeLineComponent from '../tweet/account.jsx';
@@ -13,7 +13,7 @@ class TimeLine extends SmartComponent<any, any> {
       account: this.props.account,
       tweet: this.props.tweet,
       user: this.props.user,
-      timeLineNum: 10, 
+      timeLineNum: 15, 
     }
     this.fetchUser = this.fetchUser.bind(this);
     this.getTweetById = this.getTweetById.bind(this);
@@ -39,25 +39,28 @@ class TimeLine extends SmartComponent<any, any> {
   fetchUser(accountId: string) {
     return this.state.user.getById(accountId);
   }
+  createFav(accountId, tweet) {
+    createFav(accountId, tweet);
+  }
   getTweetById(tweetId: string) {
     return this.state.tweet.getById(tweetId);
   }
   goTweetDetail(tweetId: string) {
     this.props.router.push(`/tweet/${tweetId}`);
   }
-  replayWindow(accountId: string, tweet) {
+  replyWindow(accountId: string, tweet) {
     const params = JSON.stringify({ accountId, tweetId: tweet.id_str });
     openWindow(`http://localhost:3000/tweet/${params}`);
   }
   postTweet(accountId: string, tweet) {
     postTweet(accountId, tweet);
   }
-  clickUrl(url) {
-    openWindow(url);
+  clickUrl(url, windowSize?) {
+    openWindow(url, windowSize);
   }
   subscribe() {
-    this.on('openReplayWindow', ({accountId, tweet}) => {
-      this.replayWindow(accountId, tweet);
+    this.on('openReplyWindow', ({accountId, tweet}) => {
+      this.replyWindow(accountId, tweet);
     });
     this.on('goTweetDetail', ({tweetId}) => {
       this.goTweetDetail(tweetId);
@@ -65,8 +68,11 @@ class TimeLine extends SmartComponent<any, any> {
     this.on('postTweet', ({accountId, tweet}) => {
       this.postTweet(accountId, tweet);
     });
-    this.on('openUrl', (url) => {
-      this.clickUrl(url);
+    this.on('openUrl', ({ url, windowSize }) => {
+      this.clickUrl(url, windowSize);
+    });
+    this.on('postFav', ({ accountId, tweet }) => {
+      this.createFav(accountId, tweet);
     })
   }
   render() {

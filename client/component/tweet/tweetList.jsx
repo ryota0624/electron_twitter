@@ -2,6 +2,15 @@ import React from 'react';
 import TweetItem from './tweetItem';
 import { DumpComponent } from '../dumpComponent';
 
+const listStyle = {
+  width: '100%',
+  margin: '0 auto',
+  whiteSpace: 'nowrap',
+  overflowX: 'scroll',
+  overflowY: 'scroll',
+  height: '400px',
+};
+
 class TweetList extends DumpComponent {
   itemToComponent(tweetItems) {
     return tweetItems.map(tweet => {
@@ -22,9 +31,11 @@ class TweetList extends DumpComponent {
   render() {
     const tweetComponents = this.itemToComponent(this.props.tweetItems);
     return (
-      <ul className="uk-list uk-list-line">
-        {tweetComponents}
-      </ul>
+      <div style={listStyle}>
+        <ul className="uk-list uk-list-line">
+          {tweetComponents}
+        </ul>
+      </div>
     );
   }
 }

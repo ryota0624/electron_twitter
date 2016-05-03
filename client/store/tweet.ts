@@ -1,6 +1,6 @@
 import Store from '../flux';
 import { Map, Record } from 'immutable';
-import { ADDTWEET } from '../constant/tweet';
+import { ADDTWEET, FAVEDTWEET } from '../constant/tweet';
 import { TweetModel } from '../model/tweet';
 import { AdminAccountModel } from '../model/user';
 
@@ -11,6 +11,11 @@ export function handler(action: any, state: tweetCollectionn) {
   switch (action.type) {
     case ADDTWEET: {
       const id = String(action.id)
+      return state.set(id, new TweetModel(action.tweet));
+    }
+    case FAVEDTWEET: {
+      const tweet = action.tweet;
+      const id = tweet.id_str;
       return state.set(id, new TweetModel(action.tweet));
     }
   }
