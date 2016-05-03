@@ -12,7 +12,8 @@ class TimeLine extends SmartComponent<any, any> {
     this.state = {
       account: this.props.account,
       tweet: this.props.tweet,
-      user: this.props.user
+      user: this.props.user,
+      timeLineNum: 10, 
     }
     this.fetchUser = this.fetchUser.bind(this);
     this.getTweetById = this.getTweetById.bind(this);
@@ -51,6 +52,9 @@ class TimeLine extends SmartComponent<any, any> {
   postTweet(accountId: string, tweet) {
     postTweet(accountId, tweet);
   }
+  clickUrl(url) {
+    openWindow(url);
+  }
   subscribe() {
     this.on('openReplayWindow', ({accountId, tweet}) => {
       this.replayWindow(accountId, tweet);
@@ -60,20 +64,29 @@ class TimeLine extends SmartComponent<any, any> {
     });
     this.on('postTweet', ({accountId, tweet}) => {
       this.postTweet(accountId, tweet);
+    });
+    this.on('openUrl', (url) => {
+      this.clickUrl(url);
     })
   }
   render() {
+    const { timeLineNum } = this.state;
     const accounts = this.state.account.getAllUser();
+    const accountNum = accounts.size;
+    const classNameFactory = (index) => `uk-width-1-${accountNum}`;
     const tweetItems = accounts
-      .map(account => ({ tweets: this.state.tweet.getAccountTimeLine(account), account })).toArray()
+      .map(account => ({
+        tweets: this.state.tweet.getAccountTimeLine(account, { num: timeLineNum }), account
+      })).toArray()
       .map((item, index) => <AccountTimeLine key={index}
         tweetItems={item.tweets}
         account={item.account}
         fetchUser={this.fetchUser}
         getTweetById={this.getTweetById}
+        className={classNameFactory(index)}
         />);
     return (
-      <div>
+      <div className="uk-grid">
         {tweetItems}
       </div>
     );

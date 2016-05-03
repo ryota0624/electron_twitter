@@ -42,7 +42,9 @@ class TweetItem extends DumpComponent {
     }
     const openReplayWindow = this.replay(tweet);
     const account = fetchUser(tweet.user.id_str);
-    const imgPanels = tweet.getMedia().map((media, i) => <ImgPanel key={i} media={media} />);
+    const mediaClick = (url) => () => this.dispatch('openUrl', url);
+    const imgPanels = tweet.getMedia()
+      .map((media, i) => <ImgPanel key={i} media={media} onClick={mediaClick(media.getUrl())} />);
     return (
       <li>
         <div className="uk-panel">

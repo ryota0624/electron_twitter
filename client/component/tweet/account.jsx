@@ -33,9 +33,9 @@ class AccountTimeLine extends DumpComponent {
     this.dispatch('hoge', 9);
   }
   render() {
-    const { tweetItems, account } = this.props;
+    const { tweetItems, account, className } = this.props;
     return (
-      <div className="uk-block">
+      <div className={`uk-block ${className}`}>
         <div className="uk-container">
           {accountComponent(account, this.tweetPost)}
           <TweetList
@@ -60,6 +60,7 @@ AccountTimeLine.propTypes = {
   account: React.PropTypes.any,
   fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,
+  className: React.PropTypes.any,
 };
 
 export default AccountTimeLine;

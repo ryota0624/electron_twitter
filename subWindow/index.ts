@@ -21,7 +21,9 @@ const app = () => {
   const button = document.getElementById('postBtn');
   button.addEventListener('click', () => {
     const text: HTMLTextAreaElement = document.forms['tweet'].elements['post'].value;
-    console.log(text);
+    const baseTweet = new TweetModel({ text });
+    const replayTweet = tweet.replay(baseTweet);
+    postTweet(account.id_str, replayTweet);
   })
 };
 

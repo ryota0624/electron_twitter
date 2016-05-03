@@ -27,8 +27,9 @@ export class TweetStore extends Store<tweetCollectionn> {
   getTweetByIds(tweetIds: Array<string>) {
     return tweetIds.map(id => this.getById(id)).filter(item => item ? true : false);
   }
-  getAccountTimeLine(account: AdminAccountModel) {
-    return this.getTweetByIds(account.timeLine).sort(this.sortTimeStamp);
+  getAccountTimeLine(account: AdminAccountModel, options = { num: 5 }) {
+    const { num } = options;
+    return this.getTweetByIds(account.timeLine).sort(this.sortTimeStamp).slice(0, num);
   }
   getAllTweet() {
     return this.state.toArray().sort(this.sortTimeStamp);

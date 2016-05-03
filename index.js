@@ -17,11 +17,10 @@ const appStart = () => {
     app.quit();
   });
 };
-server(appStart, { stream: false });
+server(appStart, { stream: true });
 
 ipc.on('open-url', (sys, data) => {
   const url = data.url;
-  console.log(url)
   const subWindow = new Browser({
     width: 350,
     height: 300,
