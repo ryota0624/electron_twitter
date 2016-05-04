@@ -2,8 +2,9 @@ import { StoreContainer } from './flux';
 import AdminAccountStoreFactory from './store/adminAccount';
 import tweetStoreFactory from './store/tweet';
 import UserStoreFactory from './store/user';
+import "babel-polyfill";
 
-export const storeInit = async ({ tweetActions, accountActions, userActions }) => {
+export const storeInit = async ({ tweetActions = [], accountActions = [], userActions = [] }) => {
   const tweetStore = tweetStoreFactory({ actions: tweetActions });
   const accountStore = AdminAccountStoreFactory({ actions: accountActions });
   const userStore = UserStoreFactory({ actions: userActions });
