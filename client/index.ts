@@ -1,11 +1,13 @@
-// import { storeInit } from './storeContainer';
+import { storeInit } from './storeContainer';
 import { render } from 'react-dom';
 import { app } from './component/router';
 import { socketConnect } from './service/socket';
-import storeInit from './mainStore';
+import db from './mainStore';
 import { ActionDatabase, LocalStoregeDatabase } from './database/localhost';
 
 const appInit = async () => {
+  const dba = await db.load('account');
+  console.log(dba)
   const tweetDB = new ActionDatabase('tweet', new LocalStoregeDatabase());
   await tweetDB.init();
   const tweetActions = await tweetDB.load();
@@ -21,22 +23,22 @@ const appInit = async () => {
   const storeContainer = await storeInit({ tweetActions: [] });
   console.log(storeContainer)
 
-  // const { tweet, account, user} = storeContainer.stores;
-  // tweet.addChangeListener(() => {
-  //   tweetDB.add(tweet.lastAction);
-  //   tweetDB.commit();
-  // });
+  const { tweet, account, user} = storeContainer.stores;
+  tweet.addChangeListener(() => {
+    tweetDB.add(tweet.lastAction);
+    tweetDB.commit();
+  });
 
-  // account.addChangeListener(() => {
-  //   accountDB.add(account.lastAction);
-  //   accountDB.commit();
-  // });
+  account.addChangeListener(() => {
+    accountDB.add(account.lastAction);
+    accountDB.commit();
+  });
 
-  // user.addChangeListener(() => {
-  //   userDB.add(user.lastAction);
-  //   userDB.commit();
-  // });
-  // socketConnect();
-  // render(app(storeContainer), document.getElementById('app'));
+  user.addChangeListener(() => {
+    userDB.add(user.lastAction);
+    userDB.commit();
+  });
+  socketConnect();
+  render(app(storeContainer), document.getElementById('app'));
 }
 appInit();

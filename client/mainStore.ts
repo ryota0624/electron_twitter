@@ -1,4 +1,3 @@
 const remote = require('electron').remote;
-const storeFn = remote.require('./mainProcess/store');
-console.log(storeFn)
-export default storeFn.storeInit;
+const db = remote.require('./server/db/store');
+export default db;

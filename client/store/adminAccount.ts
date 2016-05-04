@@ -35,10 +35,10 @@ export const initAccountDate = () => {
   const accountJSON = JSON.parse(document.getElementById('initial-data').getAttribute('data-json'));
   const keys = Object.keys(accountJSON);
   const accounts = {};
-  for (let i of keys) {
-    const account = JSON.parse(accountJSON[i]._raw);
-    accounts[String(i)] = new AdminAccountModel(account);
-  }
+  // for (let i of keys) {
+  //   const account = JSON.parse(accountJSON[i]._raw);
+  //   accounts[String(i)] = new AdminAccountModel(account);
+  // }
   return accounts;
 }
 const initState = Map<string, AdminAccountModel>(initAccountDate());

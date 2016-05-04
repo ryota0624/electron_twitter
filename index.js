@@ -2,7 +2,7 @@ const app = require('app');
 const Browser = require('browser-window');
 const ipc = require("electron").ipcMain;
 const server = require('./server/index.js').serverInit;
-// const streamOn = require('./server/index.js').streamOn;
+const streamOn = require('./server/index.js').streamOn;
 
 let mainWindow = null;
 const appStart = () => {
@@ -19,15 +19,15 @@ const appStart = () => {
   });
 };
 server(appStart, { stream: true });
-// streamOn((message) => {
-//   console.log('connected');
-// }, 'connected', { setStream: true });
+streamOn((message) => {
+  console.log('connected');
+}, 'connected', { setStream: true });
 
-// streamOn(m => console.log('connect'), 'connect');
-// streamOn(m => console.log('disconnect'), 'disconnect');
-// streamOn(m => console.log('reconnect'), 'reconnect');
-// streamOn(m => console.log('error'), 'error');
-// streamOn(m => console.log('message', m), 'message');
+streamOn(m => console.log('connect'), 'connect');
+streamOn(m => console.log('disconnect'), 'disconnect');
+streamOn(m => console.log('reconnect'), 'reconnect');
+streamOn(m => console.log('error'), 'error');
+streamOn(m => console.log('message', m), 'message');
 
 
 
