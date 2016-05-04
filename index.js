@@ -19,7 +19,7 @@ const appStart = () => {
   });
 };
 server(appStart, { stream: true });
-streamOn((message) => {
+streamOn(() => {
   console.log('connected');
 }, 'connected', { setStream: true });
 

@@ -35,7 +35,8 @@ io.sockets.on('connection', (socket) => {
 const twitter = require('./twitter');
 twitter.onStream((tweet, account) => {
   io.sockets.emit('tweet', { tweet, account });
-  db.save('tweet', tweet.id_str, tweet).catch(err => console.log(err));
+  const saveTweet = Object.assign({}, tweet, { reseivedAccount: account });
+  db.save('tweet', tweet.id_str, saveTweet).catch(err => console.log(err));
 }, 'tweet', { setStream: true });
 
 twitter.onStream((tweet) => {
