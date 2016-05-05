@@ -47,6 +47,11 @@ twitter.onStream((tweet) => {
   });
 }, 'delete', { setStream: true });
 
+twitter.onStream(data => {
+  console.log('reconnect', data);
+  twitter.start();
+}, 'reconnect', { setStream: true });
+
 exports.streamOn = twitter.onStream.bind(twitter);
 
 const serverInit = (cb, options) => {

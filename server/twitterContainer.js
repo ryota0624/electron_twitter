@@ -24,7 +24,7 @@ class TwitterContainer extends Event {
   setAccount(key, account, optionsArg) {
     this.accounts.set(key, account);
     const twit = this.twit(account.token, account.tokenSecret);
-    const stream = { on() {} };// = Object.assign(twit.stream('user'), { account });
+    const stream = Object.assign(twit.stream('user'), { account });
     if (optionsArg.setStream) {
       this.streamCbs.forEach(cb => {
         this.appendCallback(stream, cb.type, cb.fn);

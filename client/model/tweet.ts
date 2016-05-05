@@ -92,3 +92,10 @@ export class TweetModel extends Record(initialModel) {
     return new TweetModel(params);
   }
 }
+
+export class DeleteTweet extends Record({
+  id: 0,
+  userId: 0,
+}) {
+  
+}

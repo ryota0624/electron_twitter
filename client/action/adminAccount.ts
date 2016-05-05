@@ -8,7 +8,7 @@ export function updateAccount(id, params) {
   command(UPDATE, { id, params });
 }
 
-export const accountActionCreater = (accountDB) => {
+export const addActionCreater = (accountDB) => {
   const keys = Object.keys(accountDB);
   const actions = keys.map(key => {
     return {
@@ -18,4 +18,19 @@ export const accountActionCreater = (accountDB) => {
     }
   });
   return actions;
+}
+
+export function updateActionCreater(tweetDB) {
+  const keys = Object.keys(tweetDB);
+  const tweetActions = keys.map(key => {
+    console.log(tweetDB[key])
+    return {
+      type: UPDATE,
+      id: tweetDB[key].reseivedAccount.id_str,
+      params: {
+        timeLine: [tweetDB[key].id_str],
+      },
+    }
+  });
+  return tweetActions;
 }

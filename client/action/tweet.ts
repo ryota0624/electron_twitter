@@ -21,3 +21,15 @@ export function createFav(userId, tweet: TweetModel) {
   return request.post('/fav/create', Object.assign({}, { options: { id: tweet.id_str } }, { key: userId }))
     .then(res => res.data)
 }
+
+export function addActionCreater(tweetDB) {
+  const keys = Object.keys(tweetDB);
+  const tweetActions = keys.map(key => {
+    return {
+      type: ADDTWEET,
+      id: tweetDB[key].id_str,
+      tweet: tweetDB[key],
+    }
+  });
+  return tweetActions;
+}

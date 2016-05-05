@@ -6,6 +6,7 @@ import { AdminAccountModel } from '../model/user';
 interface accountCollectionn extends Map<string, AdminAccountModel>{}
 
 export function handler(action: any, state: accountCollectionn): accountCollectionn {
+  console.log(action.id)
   switch (action.type) {
     case ADDACCOUNT: {
       return state.set(action.id, new AdminAccountModel(action.account));
