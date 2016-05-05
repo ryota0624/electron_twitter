@@ -1,11 +1,9 @@
-import Store from '../flux';
+import { CollectionStore } from '../flux';
 import { Map } from 'immutable';
 import { DELETETWEET } from '../constant/deleteTweet';
 import { DeleteTweet } from '../model/tweet';
 
-interface deleteTweetCollection extends Map<string, DeleteTweet>{ }
-
-export function handler(action: any, state: deleteTweetCollection) :deleteTweetCollection{
+export function handler(action: any, state) {
   switch (action.type) {
     case DELETETWEET: {
       const id = String(action.id);
@@ -15,7 +13,7 @@ export function handler(action: any, state: deleteTweetCollection) :deleteTweetC
   return state;
 }
 
-export class DeleteTweetStore extends Store<deleteTweetCollection> {
+export class DeleteTweetStore extends CollectionStore<DeleteTweet> {
   getAllDeleted() {
     return this.state.toJS();
   }

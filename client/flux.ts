@@ -171,3 +171,38 @@ export class SmartComponent<T, U> extends React.Component<T, U> {
     
   }
 }
+
+interface Collection<T> extends Im.Map<string, T> {}
+export class CollectionStore<T> extends ChangeEmitter {
+  state: Collection<T>;
+  _handler: (any, Collection) => Collection<T>;
+  actions: Im.List<any>;
+  lastAction: any;
+  constructor(initialState: Im.Map<string, T>, handler: (any, Collection) => Collection<T>, actions: Array<any> = []) {
+    super();
+    this.state = initialState;
+    this._handler = handler;
+    this.actions = Im.List(actions);
+    this.state = this.reduceActions(actions);
+    dispatcher.register(this.register.bind(this));
+  }
+  reduceActions(actions) {
+    return this.actions.reduce((state, action) => this._handler(action, state), this.state);
+  }
+  private register(action) {
+    const state = this.state;
+    const nextState = this._handler(action, state);
+    if (!Im.is(nextState, state)) {
+      this.lastAction = action;
+      this.actions = this.actions.push(action);
+      this.state = nextState;
+      this.emitChange();
+    }
+  }
+  getActions() {
+    return this.actions.toArray();
+  }
+  get() {
+    return this.state;
+  }
+}
