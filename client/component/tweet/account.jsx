@@ -7,14 +7,14 @@ import { AdminAccountModel } from '../../model/user';
 import { TweetModel } from '../../model/tweet';
 
 const accountComponent = (params, click) => {
-  const { name, screen_name, profile_image_url } = params;
+  const { name, screen_name, profile_image_url } = params.account;
   return (
     <div className={"uk-block-muted"}>
       <div className="uk-container">
         <img className="uk-border-rounded" src={profile_image_url} alt={'hoge'} />
         <strong>{name}</strong>
         <span>{screen_name}</span>
-        <PostForm onClickPost={click} />
+        <PostForm onClickPost={click} getTemplate={params.getTemplate} />
       </div>
     </div>
   );
@@ -37,7 +37,7 @@ class AccountTimeLine extends DumpComponent {
     return (
       <div className={`${className}`}>
         <div className="uk-container">
-          {accountComponent(account, this.tweetPost)}
+          {accountComponent({ account, getTemplate: this.props.getTemplate }, this.tweetPost)}
           <TweetList
             tweetItems={tweetItems}
             fetchUser={this.props.fetchUser}
@@ -61,6 +61,7 @@ AccountTimeLine.propTypes = {
   fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,
   className: React.PropTypes.any,
+  getTemplate: React.PropTypes.any,
 };
 
 export default AccountTimeLine;

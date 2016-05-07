@@ -7,7 +7,7 @@ class Root extends React.Component<any, any> {
     return (
       <div className="uk-grid">
         <div className="uk-width-1-10  uk-block-primary">
-          {/*<Sidebar />*/}
+          <Sidebar />
         </div>
         <div className="uk-width-9-10">
           {this.props.children}

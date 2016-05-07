@@ -30,12 +30,12 @@ describe('tweetStore', () => {
   const initState = Map<string, TweetModel>();
   const mockTweet = new TweetModel(sample);
   const mockAccount = new AdminAccountModel(Object.assign({}, sample.user, {timeLine: [sample.id_str]}));
-  const store = new TweetStore(initState, handler);
+  const store = new TweetStore(handler, [], initState);
   it('get AdminAccount TimeLine', () => {
     store.addChangeListener(() => {
       const timeline = store.getAccountTimeLine(mockAccount);
       assert.equal(timeline.length, 1);
     })
-    command(ADDTWEET, sample);
+    command(ADDTWEET, { id: sample.id_str, tweet: sample });
   })
 })

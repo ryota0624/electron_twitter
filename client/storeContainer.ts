@@ -2,6 +2,8 @@ import { StoreContainer } from './flux';
 import AdminAccountStoreFactory from './store/adminAccount';
 import tweetStoreFactory from './store/tweet';
 import UserStoreFactory from './store/user';
+import TemplateStoreFactory from './store/template';
+
 
 export const storeInit = async ({ tweetActions = [], accountActions = [], userActions = [] }) => {
   const tweetStore = tweetStoreFactory({ actions: tweetActions });

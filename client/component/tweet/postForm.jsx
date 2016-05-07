@@ -33,6 +33,7 @@ class PostForm extends React.Component {
             <button className="uk-button" onClick={this.onClickPost}>POST</button>
           </div>
         </form>
+        {/* suggestBox -> onChangeText*/}
       </div>
     );
   }
@@ -41,6 +42,7 @@ class PostForm extends React.Component {
 PostForm.propTypes = {
   className: React.PropTypes.string,
   onClickPost: React.PropTypes.any,
+  getTemplate: React.PropTypes.any,
 };
 
 export default PostForm;

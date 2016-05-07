@@ -18,6 +18,8 @@ class TimeLine extends SmartComponent<any, any> {
     this.fetchUser = this.fetchUser.bind(this);
     this.getTweetById = this.getTweetById.bind(this);
     this.goTweetDetail = this.goTweetDetail.bind(this);
+    this.getTemplate = this.getTemplate.bind(this);
+    this.getTemplate = this.getTemplate.bind(this);
   }
   componentDidMount() {
     this.props.tweet.addChangeListener(this.onChangeStore);
@@ -58,6 +60,9 @@ class TimeLine extends SmartComponent<any, any> {
   clickUrl(url, windowSize?) {
     openWindow(url, windowSize);
   }
+  getTemplate(keyword) {
+    return this.props.template.getTemplate(keyword);
+  }
   subscribe() {
     this.on('openReplyWindow', ({accountId, tweet}) => {
       this.replyWindow(accountId, tweet);
@@ -73,7 +78,7 @@ class TimeLine extends SmartComponent<any, any> {
     });
     this.on('postFav', ({ accountId, tweet }) => {
       this.createFav(accountId, tweet);
-    })
+    });
   }
   render() {
     const { timeLineNum } = this.state;
@@ -89,12 +94,14 @@ class TimeLine extends SmartComponent<any, any> {
         account={item.account}
         fetchUser={this.fetchUser}
         getTweetById={this.getTweetById}
-        className={classNameFactory(index)}
+        className={classNameFactory(index) }
+        getTemplate={this.getTemplate}
         />);
     return (
-          <div className="uk-grid">
-            {tweetItems}
-          </div>
+      <div className="uk-grid">
+        
+        {tweetItems}
+       </div>
     );
   }
 }

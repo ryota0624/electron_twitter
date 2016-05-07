@@ -23,7 +23,6 @@ export const addActionCreater = (accountDB) => {
 export function updateActionCreater(tweetDB) {
   const keys = Object.keys(tweetDB);
   const tweetActions = keys.map(key => {
-    console.log(tweetDB[key])
     return {
       type: UPDATE,
       id: tweetDB[key].reseivedAccount.id_str,

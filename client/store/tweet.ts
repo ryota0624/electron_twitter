@@ -1,13 +1,11 @@
-import Store from '../flux';
+import { CollectionStore, Collection } from '../flux';
 import { Map, Record } from 'immutable';
 import { ADDTWEET, FAVEDTWEET } from '../constant/tweet';
 import { TweetModel } from '../model/tweet';
 import { AdminAccountModel } from '../model/user';
 
 
-interface tweetCollectionn extends Map<string, TweetModel>{}
-
-export function handler(action: any, state: tweetCollectionn) {
+export function handler(action: any, state: Collection<TweetModel>):Collection<TweetModel> {
   switch (action.type) {
     case ADDTWEET: {
       const id = String(action.id)
@@ -22,7 +20,7 @@ export function handler(action: any, state: tweetCollectionn) {
   return state;
 }
 
-export class TweetStore extends Store<tweetCollectionn> {
+export class TweetStore extends CollectionStore<TweetModel> {
   getById(id: string) {
     return this.state.get(String(id));
   }
@@ -44,9 +42,8 @@ export class TweetStore extends Store<tweetCollectionn> {
   }
 }
 
-const initState = Map<string, TweetModel>()
-export const TweetStoreFactory = ({state = initState, actions = []}) => {
-  const newState = state ? state : initState;
-  return new TweetStore(newState, handler, actions);
+export const TweetStoreFactory = (params) => {
+  const { actions, state } = params;
+  return new TweetStore(handler, actions, state);
 }
 export default TweetStoreFactory;

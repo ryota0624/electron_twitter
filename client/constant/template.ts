@@ -1,0 +1,1 @@
+export const ADDTEMPLATE= '__addtemplate__';

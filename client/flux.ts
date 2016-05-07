@@ -172,15 +172,15 @@ export class SmartComponent<T, U> extends React.Component<T, U> {
   }
 }
 
-interface Collection<T> extends Im.Map<string, T> {}
+export interface Collection<T> extends Im.Map<string, T> {}
 export class CollectionStore<T> extends ChangeEmitter {
   state: Collection<T>;
   _handler: (any, Collection) => Collection<T>;
   actions: Im.List<any>;
   lastAction: any;
-  constructor(initialState: Im.Map<string, T>, handler: (any, Collection) => Collection<T>, actions: Array<any> = []) {
+  constructor(handler: (any, Collection) => Collection<T>, actions: Array<any> = [], initialState: Im.Map<string, T>) {
     super();
-    this.state = initialState;
+    this.state = initialState || Im.Map<string, T>();
     this._handler = handler;
     this.actions = Im.List(actions);
     this.state = this.reduceActions(actions);
