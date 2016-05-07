@@ -39,8 +39,9 @@ class AccountTimeLine extends DumpComponent {
     const { getAccountTimeLine, account, className } = this.props;
     const tweetItems = getAccountTimeLine(account, { num: this.state.timeLine });
     const onScroll = this.onScroll.bind(this);
+    const timeLineOpen = this.props.account.timeLineOpen;
     return (
-      <div className={`${className}`}>
+      <div className={`${className}`} hidden={!timeLineOpen}>
         <div className="uk-container">
           {accountComponent({ account, getTemplate: this.props.getTemplate }, this.tweetPost)}
           <TweetList

@@ -20,7 +20,7 @@ export class UserModel extends Record(UserDefaultProperty) {
   screen_name: string;
 }
 
-const AdminDefaultProperty = Object.assign({}, UserDefaultProperty, { timeLine: [] });
+const AdminDefaultProperty = Object.assign({}, UserDefaultProperty, { timeLine: [], timeLineOpen: true });
 
 export class AdminAccountModel extends Record(AdminDefaultProperty) {
   timeLine: Array<string>;
@@ -31,6 +31,7 @@ export class AdminAccountModel extends Record(AdminDefaultProperty) {
   profile_background_image_url: string;
   profile_image_url: string;
   screen_name: string;
+  timeLineOpen: boolean;
   updateTimeLine(params): AdminAccountModel {
     const concatTimeLine = (bool) => {
       return bool ? [].concat(this.timeLine, params.timeLine)

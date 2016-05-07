@@ -27,6 +27,7 @@ class TimeLine extends SmartComponent<any, any> {
     this.props.user.addChangeListener(this.onChangeStore);
   }
   componentWillUnmount() {
+    console.log('unmount')
     this.props.tweet.removeChangeListener(this.onChangeStore);
     this.props.account.removeChangeListener(this.onChangeStore);
     this.props.user.removeChangeListener(this.onChangeStore);

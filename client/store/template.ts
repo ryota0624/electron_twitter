@@ -1,11 +1,14 @@
 import { CollectionStore, Collection } from '../flux';
 import { TemplateModel } from '../model/template';
-import { ADDTEMPLATE } from '../constant/template';
+import { ADDTEMPLATE, REMOVETEMPLATE } from '../constant/template';
 
 export function handler(action, state: Collection<TemplateModel>) :Collection<TemplateModel> {
   switch (action.type) {
     case ADDTEMPLATE: {
       return state.set(action.id, new TemplateModel(action.template));
+    }
+    case REMOVETEMPLATE: {
+      return state.remove(action.id);
     }
   }
   return state;

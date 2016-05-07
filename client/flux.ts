@@ -88,6 +88,9 @@ export const connect = (component) => {
         storeContainer: this.context.storeContainer
       }
     }
+    componentWillUnmount() {
+      this.context.storeContainer.removeChangeListener(this.onChange);
+    }
     onChange() {
       this.setState({ storeContainer: this.context.storeContainer });
     }

@@ -21,7 +21,7 @@ module.exports = (app, server, passport) => {
     let tweet = {};
     try {
       const params = JSON.parse(req.params.data);
-      account = twitter.getAccount(params.accountId)._json;
+      account = twitter.getAccount(params.accountId);
       db.load('tweet').then(tweets => {
         tweet = tweets[params.tweetId];
         const accountData = JSON.stringify(account);

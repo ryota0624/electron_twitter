@@ -1,11 +1,16 @@
 import React from 'react';
-
-class TemplateItem extends React.Component {
+import { DumpComponent } from '../dumpComponent';
+class TemplateItem extends DumpComponent {
+  removeTemplate() {
+    this.dispatch('removeTemplate', { template: this.props.template });
+  }
   render() {
     const template = this.props.template;
+    const removeTemplate = this.removeTemplate.bind(this);
     return (
       <li>
         {template.template}
+        <button onClick={removeTemplate}>remove</button>
       </li>
     );
   }

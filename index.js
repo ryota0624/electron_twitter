@@ -6,7 +6,7 @@ const streamOn = require('./server/index.js').streamOn;
 
 let mainWindow = null;
 const appStart = () => {
-  app.on('window-all-closed', () => app.quit());
+  // app.on('window-all-closed', () => app.quit());
   // app.on('ready', () => {
   mainWindow = new Browser({
     width: 800,
@@ -15,7 +15,6 @@ const appStart = () => {
   mainWindow.loadURL('http://localhost:3000');
   mainWindow.on('closed', () => {
     mainWindow = null;
-    app.quit();
   });
 };
 server(appStart, { stream: true });

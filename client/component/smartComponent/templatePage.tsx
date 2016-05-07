@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect, SmartComponent } from '../../flux';
-import { addTemplate } from '../../action/template';
+import { addTemplate, removeTemplate } from '../../action/template';
 import TemplateFormComponent from '../template/templateForm';
 import TemplateListComponent from '../template/templateList';
 const TemplateForm: any = TemplateFormComponent;
@@ -17,6 +17,9 @@ class TemplatePage extends SmartComponent<any, any> {
   addTemplate(id, template) {
     addTemplate(id, template);
   }
+  removeTemplate(template) {
+    removeTemplate(template);
+  }
   onChangeStore() {
     this.setState({ templates: this.props.template.getAllTemplate() });
   }
@@ -29,6 +32,9 @@ class TemplatePage extends SmartComponent<any, any> {
   subscribe() {
     this.on('addTemplate', ({ id, template }) => {
       this.addTemplate(id, template);
+    });
+    this.on('removeTemplate', ({ template }) => {
+      this.removeTemplate(template);
     });
   }
   render() {
