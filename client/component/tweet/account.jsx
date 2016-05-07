@@ -24,16 +24,21 @@ class AccountTimeLine extends DumpComponent {
   constructor(props, context) {
     super(props, context);
     this.tweetPost = this.tweetPost.bind(this);
+    this.state = {
+      timeLine: 15,
+    };
   }
   tweetPost(text) {
     const tweet = new TweetModel({ text });
     this.dispatch('postTweet', { accountId: this.props.account.id_str, tweet });
   }
-  componentDidMount() {
-    this.dispatch('hoge', 9);
+  onScroll() {
+    this.setState({ timeLine: this.state.timeLine + 5 });
   }
   render() {
-    const { tweetItems, account, className } = this.props;
+    const { getAccountTimeLine, account, className } = this.props;
+    const tweetItems = getAccountTimeLine(account, { num: this.state.timeLine });
+    const onScroll = this.onScroll.bind(this);
     return (
       <div className={`${className}`}>
         <div className="uk-container">
@@ -43,6 +48,7 @@ class AccountTimeLine extends DumpComponent {
             fetchUser={this.props.fetchUser}
             getTweetById={this.props.getTweetById}
             account={account}
+            onScroll={onScroll}
           />
         </div>
       </div>
@@ -56,7 +62,7 @@ AccountTimeLine.defaultProps = {
 };
 
 AccountTimeLine.propTypes = {
-  tweetItems: React.PropTypes.arrayOf(React.PropTypes.any),
+  getAccountTimeLine: React.PropTypes.any,
   account: React.PropTypes.any,
   fetchUser: React.PropTypes.any,
   getTweetById: React.PropTypes.any,

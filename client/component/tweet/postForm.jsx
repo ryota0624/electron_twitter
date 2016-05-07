@@ -12,7 +12,8 @@ class PostForm extends React.Component {
   onChangeText(e) {
     this.setState({ text: e.target.value });
   }
-  onClickPost() {
+  onClickPost(e) {
+    e.preventDefault();
     this.props.onClickPost(this.state.text);
     this.setState({ text: '' });
   }

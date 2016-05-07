@@ -87,10 +87,11 @@ class TimeLine extends SmartComponent<any, any> {
     const classNameFactory = (index) => `uk-width-1-${accountNum}`;
     const tweetItems = accounts
       .map(account => ({
-        tweets: this.state.tweet.getAccountTimeLine(account, { num: timeLineNum }), account
+        tweets: this.state.tweet.getAccountTimeLine.bind(this.state.tweet),
+        account
       })).toArray()
       .map((item, index) => <AccountTimeLine key={index}
-        tweetItems={item.tweets}
+        getAccountTimeLine={item.tweets}
         account={item.account}
         fetchUser={this.fetchUser}
         getTweetById={this.getTweetById}
@@ -99,7 +100,6 @@ class TimeLine extends SmartComponent<any, any> {
         />);
     return (
       <div className="uk-grid">
-        
         {tweetItems}
        </div>
     );

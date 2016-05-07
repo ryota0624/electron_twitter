@@ -28,10 +28,22 @@ class TweetList extends DumpComponent {
       );
     });
   }
+  onScroll(e) {
+    const elm = e.target;
+    const height = elm.offsetHeight;
+    const scrollHeight = elm.scrollHeight;
+    const scrollTop = elm.scrollTop;
+    const scrollPosition = height + scrollTop;
+    const proximity = 0;
+    if ((scrollHeight - scrollPosition) / scrollHeight <= proximity) {
+      this.props.onScroll();
+    }
+  }
   render() {
+    const onScroll = this.onScroll.bind(this);
     const tweetComponents = this.itemToComponent(this.props.tweetItems);
     return (
-      <div style={listStyle}>
+      <div onScroll={onScroll} style={listStyle}>
         <ul className="uk-list uk-list-line">
           {tweetComponents}
         </ul>
@@ -50,6 +62,7 @@ TweetList.propTypes = {
   goTweetDetail: React.PropTypes.any,
   replay: React.PropTypes.any,
   account: React.PropTypes.any,
+  onScroll: React.PropTypes.any,
 };
 
 export default TweetList;
