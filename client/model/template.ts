@@ -20,7 +20,6 @@ export class TemplateModel extends Record({
   getText() {
     const prevText = this.template;
     const nextText = this.template.replace(inputToken, this.input);
-    console.log(prevText, nextText)
     if (prevText != nextText) {
       const nextTemplate = this.setTemplate(nextText);
       return nextTemplate.getText();

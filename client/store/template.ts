@@ -16,7 +16,7 @@ export class TemplateStore extends CollectionStore<TemplateModel> {
     return this.state.toArray();
   }
   getTemplate(template: string) {
-    if(template.length <= 0) return this.getAllTemplate();
+    if(template.length <= 0) return []
     return this.state.filter(templateModel => templateModel.template.match(template) ? true : false).toArray();
   }
 }

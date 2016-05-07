@@ -1,4 +1,5 @@
 import React from 'react';
+import SuggestForm from './suggestForm';
 
 class PostForm extends React.Component {
   constructor(props) {
@@ -8,6 +9,7 @@ class PostForm extends React.Component {
     };
     this.onChangeText = this.onChangeText.bind(this);
     this.onClickPost = this.onClickPost.bind(this);
+    this.onSubmitSuggest = this.onSubmitSuggest.bind(this);
   }
   onChangeText(e) {
     this.setState({ text: e.target.value });
@@ -17,8 +19,12 @@ class PostForm extends React.Component {
     this.props.onClickPost(this.state.text);
     this.setState({ text: '' });
   }
+  onSubmitSuggest(template) {
+    this.setState({ text: template.getText() });
+  }
   render() {
     const { text } = this.state;
+    const suggests = this.props.getTemplate(text);
     const { className } = this.props;
     return (
       <div className={className} >
@@ -34,7 +40,7 @@ class PostForm extends React.Component {
             <button className="uk-button" onClick={this.onClickPost}>POST</button>
           </div>
         </form>
-        {/* suggestBox -> onChangeText*/}
+        <SuggestForm suggestList={suggests} onClick={this.onSubmitSuggest} />
       </div>
     );
   }
