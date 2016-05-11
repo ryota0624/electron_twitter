@@ -1,0 +1,1 @@
+export const DELETETWEET = '__deleteTweet__';
