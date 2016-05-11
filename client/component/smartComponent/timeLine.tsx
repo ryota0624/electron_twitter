@@ -27,7 +27,6 @@ class TimeLine extends SmartComponent<any, any> {
     this.props.user.addChangeListener(this.onChangeStore);
   }
   componentWillUnmount() {
-    console.log('unmount')
     this.props.tweet.removeChangeListener(this.onChangeStore);
     this.props.account.removeChangeListener(this.onChangeStore);
     this.props.user.removeChangeListener(this.onChangeStore);
@@ -83,7 +82,7 @@ class TimeLine extends SmartComponent<any, any> {
   }
   render() {
     const { timeLineNum } = this.state;
-    const accounts = this.state.account.getAllUser();
+    const accounts = this.state.account.getOpenTimeLines();
     const accountNum = accounts.size;
     const classNameFactory = (index) => `uk-width-1-${accountNum}`;
     const tweetItems = accounts

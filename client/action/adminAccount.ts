@@ -1,4 +1,4 @@
-import { ADDACCOUNT, UPDATE } from '../constant/adminAccount';
+import { ADDACCOUNT, UPDATE, TOGGLETIMELINE } from '../constant/adminAccount';
 import { command } from '../flux';
 
 export function addAccount(id, account) {
@@ -7,7 +7,9 @@ export function addAccount(id, account) {
 export function updateAccount(id, params) {
   command(UPDATE, { id, params });
 }
-
+export function toggleTimeLine(account) {
+  command(TOGGLETIMELINE, { id: account.id_str });
+}
 export const addActionCreater = (accountDB) => {
   const keys = Object.keys(accountDB);
   const actions = keys.map(key => {

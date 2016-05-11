@@ -43,4 +43,8 @@ export class AdminAccountModel extends Record(AdminDefaultProperty) {
     const updatedAccount = new AdminAccountModel(newModel)
     return updatedAccount;
   }
+  toggleTimeLine() {
+    const modelParams = Object.assign({}, this.toJS(), { timeLineOpen: !this.timeLineOpen });
+    return new AdminAccountModel(modelParams)
+  }
 }

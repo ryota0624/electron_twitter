@@ -1,6 +1,6 @@
 import Store from '../flux';
 import { is, Map } from 'immutable';
-import { ADDACCOUNT, UPDATE } from '../constant/adminAccount';
+import { ADDACCOUNT, UPDATE, TOGGLETIMELINE } from '../constant/adminAccount';
 import { AdminAccountModel } from '../model/user';
 
 interface accountCollectionn extends Map<string, AdminAccountModel>{}
@@ -11,11 +11,16 @@ export function handler(action: any, state: accountCollectionn): accountCollecti
       return state.set(action.id, new AdminAccountModel(action.account));
     };
     case UPDATE: {
-      const id = String(action.id)
+      const id = String(action.id);
       const updateAccount = state.get(id);
       if (!updateAccount) return state;
       const nextState = state.set(id, updateAccount.updateTimeLine(action.params));
       return nextState;
+    }
+    case TOGGLETIMELINE: {
+      const id = String(action.id);
+      const toggleAccount = state.get(id);
+      return state.set(id, toggleAccount.toggleTimeLine());
     }
   }
   return state;
@@ -27,6 +32,9 @@ export class AdminAccountStore extends Store<accountCollectionn> {
   }
   getAllUser() {
     return this.state
+  }
+  getOpenTimeLines() {
+    return this.state.filter(account => account.timeLineOpen);
   }
 }
 
